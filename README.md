@@ -163,6 +163,18 @@ the facade is hand-written. Regenerate the models after a contract change:
 go test ./...
 ```
 
+## Releasing
+
+Releases are git tags — pushing a `vX.Y.Z` tag publishes the module to the Go
+proxy (no separate registry upload). Use the helper:
+
+```bash
+./scripts/release.sh 0.2.0   # bumps version.go, runs checks, commits, tags, pushes, gh release
+```
+
+Tags are immutable: to fix a bad release, cut a new patch. A `v2`+ release
+additionally requires the `/v2` module-path suffix in `go.mod`.
+
 ## License
 
 [MIT](LICENSE)
