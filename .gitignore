@@ -13,6 +13,9 @@ coverage.*
 .vscode/
 .DS_Store
 
+# Local-only Claude notes (never committed)
+CLAUDE.local.md
+
 # Never commit secrets
 .env
 .env.*
