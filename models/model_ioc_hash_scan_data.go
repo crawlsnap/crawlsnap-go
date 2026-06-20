@@ -23,40 +23,50 @@ var _ MappedNullable = &IocHashScanData{}
 // IocHashScanData struct for IocHashScanData
 type IocHashScanData struct {
 	// SHA-256 of the queried hash (resolved upstream when md5/sha1 supplied).
-	HashId                      string                   `json:"hash_id"`
-	SearchType                  string                   `json:"search_type"`
-	Ssdeep                      *string                  `json:"ssdeep,omitempty"`
-	TypeTag                     *string                  `json:"type_tag,omitempty"`
-	TypeTags                    []string                 `json:"type_tags,omitempty"`
-	Magic                       *string                  `json:"magic,omitempty"`
-	Magika                      *string                  `json:"magika,omitempty"`
-	TypeDescription             *string                  `json:"type_description,omitempty"`
-	MeaningfulName              *string                  `json:"meaningful_name,omitempty"`
-	Authentihash                *string                  `json:"authentihash,omitempty"`
-	Detectiteasy                map[string]interface{}   `json:"detectiteasy,omitempty"`
-	Trid                        []map[string]interface{} `json:"trid,omitempty"`
-	TypeExtension               *string                  `json:"type_extension,omitempty"`
-	Tags                        []string                 `json:"tags,omitempty"`
-	Tlsh                        *string                  `json:"tlsh,omitempty"`
-	AnalysisDate                *int64                   `json:"analysis_date,omitempty"`
-	ModificationDate            *int64                   `json:"modification_date,omitempty"`
-	Md5                         *string                  `json:"md5,omitempty"`
-	Sha1                        *string                  `json:"sha1,omitempty"`
-	Sha256                      *string                  `json:"sha256,omitempty"`
-	FileSize                    *int64                   `json:"file_size,omitempty"`
-	DroppedFiles                []map[string]interface{} `json:"dropped_files,omitempty"`
-	BundledFiles                []map[string]interface{} `json:"bundled_files,omitempty"`
-	ContactedIps                []map[string]interface{} `json:"contacted_ips,omitempty"`
-	ContactedDomains            []map[string]interface{} `json:"contacted_domains,omitempty"`
-	Sigma                       map[string]interface{}   `json:"sigma,omitempty"`
-	SigmaStats                  map[string]interface{}   `json:"sigma_stats,omitempty"`
-	Classification              map[string]interface{}   `json:"classification,omitempty"`
-	PeInfo                      map[string]interface{}   `json:"pe_info,omitempty"`
-	Signature                   map[string]interface{}   `json:"signature,omitempty"`
-	VotesResult                 map[string]interface{}   `json:"votes_result,omitempty"`
-	SandboxVerdicts             map[string]interface{}   `json:"sandbox_verdicts,omitempty"`
-	SecurityVendorAnalysis      map[string]interface{}   `json:"security_vendor_analysis,omitempty"`
-	SecurityVendorAnalysisStats map[string]interface{}   `json:"security_vendor_analysis_stats,omitempty"`
+	HashId          string   `json:"hash_id"`
+	SearchType      string   `json:"search_type"`
+	Ssdeep          *string  `json:"ssdeep,omitempty"`
+	TypeTag         *string  `json:"type_tag,omitempty"`
+	TypeTags        []string `json:"type_tags,omitempty"`
+	Magic           *string  `json:"magic,omitempty"`
+	Magika          *string  `json:"magika,omitempty"`
+	TypeDescription *string  `json:"type_description,omitempty"`
+	MeaningfulName  *string  `json:"meaningful_name,omitempty"`
+	Authentihash    *string  `json:"authentihash,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	Detectiteasy     interface{}              `json:"detectiteasy,omitempty"`
+	Trid             []map[string]interface{} `json:"trid,omitempty"`
+	TypeExtension    *string                  `json:"type_extension,omitempty"`
+	Tags             []string                 `json:"tags,omitempty"`
+	Tlsh             *string                  `json:"tlsh,omitempty"`
+	AnalysisDate     *int64                   `json:"analysis_date,omitempty"`
+	ModificationDate *int64                   `json:"modification_date,omitempty"`
+	Md5              *string                  `json:"md5,omitempty"`
+	Sha1             *string                  `json:"sha1,omitempty"`
+	Sha256           *string                  `json:"sha256,omitempty"`
+	FileSize         *int64                   `json:"file_size,omitempty"`
+	DroppedFiles     []map[string]interface{} `json:"dropped_files,omitempty"`
+	BundledFiles     []map[string]interface{} `json:"bundled_files,omitempty"`
+	ContactedIps     []map[string]interface{} `json:"contacted_ips,omitempty"`
+	ContactedDomains []map[string]interface{} `json:"contacted_domains,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	Sigma interface{} `json:"sigma,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	SigmaStats interface{} `json:"sigma_stats,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	Classification interface{} `json:"classification,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	PeInfo interface{} `json:"pe_info,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	Signature interface{} `json:"signature,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	VotesResult interface{} `json:"votes_result,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	SandboxVerdicts interface{} `json:"sandbox_verdicts,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	SecurityVendorAnalysis interface{} `json:"security_vendor_analysis,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	SecurityVendorAnalysisStats interface{} `json:"security_vendor_analysis_stats,omitempty"`
 }
 
 type _IocHashScanData IocHashScanData
@@ -384,10 +394,10 @@ func (o *IocHashScanData) SetAuthentihash(v string) {
 	o.Authentihash = &v
 }
 
-// GetDetectiteasy returns the Detectiteasy field value if set, zero value otherwise.
-func (o *IocHashScanData) GetDetectiteasy() map[string]interface{} {
-	if o == nil || IsNil(o.Detectiteasy) {
-		var ret map[string]interface{}
+// GetDetectiteasy returns the Detectiteasy field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetDetectiteasy() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.Detectiteasy
@@ -395,11 +405,12 @@ func (o *IocHashScanData) GetDetectiteasy() map[string]interface{} {
 
 // GetDetectiteasyOk returns a tuple with the Detectiteasy field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetDetectiteasyOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetDetectiteasyOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.Detectiteasy) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.Detectiteasy, true
+	return &o.Detectiteasy, true
 }
 
 // HasDetectiteasy returns a boolean if a field has been set.
@@ -411,8 +422,8 @@ func (o *IocHashScanData) HasDetectiteasy() bool {
 	return false
 }
 
-// SetDetectiteasy gets a reference to the given map[string]interface{} and assigns it to the Detectiteasy field.
-func (o *IocHashScanData) SetDetectiteasy(v map[string]interface{}) {
+// SetDetectiteasy gets a reference to the given interface{} and assigns it to the Detectiteasy field.
+func (o *IocHashScanData) SetDetectiteasy(v interface{}) {
 	o.Detectiteasy = v
 }
 
@@ -864,10 +875,10 @@ func (o *IocHashScanData) SetContactedDomains(v []map[string]interface{}) {
 	o.ContactedDomains = v
 }
 
-// GetSigma returns the Sigma field value if set, zero value otherwise.
-func (o *IocHashScanData) GetSigma() map[string]interface{} {
-	if o == nil || IsNil(o.Sigma) {
-		var ret map[string]interface{}
+// GetSigma returns the Sigma field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetSigma() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.Sigma
@@ -875,11 +886,12 @@ func (o *IocHashScanData) GetSigma() map[string]interface{} {
 
 // GetSigmaOk returns a tuple with the Sigma field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetSigmaOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetSigmaOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.Sigma) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.Sigma, true
+	return &o.Sigma, true
 }
 
 // HasSigma returns a boolean if a field has been set.
@@ -891,15 +903,15 @@ func (o *IocHashScanData) HasSigma() bool {
 	return false
 }
 
-// SetSigma gets a reference to the given map[string]interface{} and assigns it to the Sigma field.
-func (o *IocHashScanData) SetSigma(v map[string]interface{}) {
+// SetSigma gets a reference to the given interface{} and assigns it to the Sigma field.
+func (o *IocHashScanData) SetSigma(v interface{}) {
 	o.Sigma = v
 }
 
-// GetSigmaStats returns the SigmaStats field value if set, zero value otherwise.
-func (o *IocHashScanData) GetSigmaStats() map[string]interface{} {
-	if o == nil || IsNil(o.SigmaStats) {
-		var ret map[string]interface{}
+// GetSigmaStats returns the SigmaStats field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetSigmaStats() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.SigmaStats
@@ -907,11 +919,12 @@ func (o *IocHashScanData) GetSigmaStats() map[string]interface{} {
 
 // GetSigmaStatsOk returns a tuple with the SigmaStats field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetSigmaStatsOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetSigmaStatsOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.SigmaStats) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.SigmaStats, true
+	return &o.SigmaStats, true
 }
 
 // HasSigmaStats returns a boolean if a field has been set.
@@ -923,15 +936,15 @@ func (o *IocHashScanData) HasSigmaStats() bool {
 	return false
 }
 
-// SetSigmaStats gets a reference to the given map[string]interface{} and assigns it to the SigmaStats field.
-func (o *IocHashScanData) SetSigmaStats(v map[string]interface{}) {
+// SetSigmaStats gets a reference to the given interface{} and assigns it to the SigmaStats field.
+func (o *IocHashScanData) SetSigmaStats(v interface{}) {
 	o.SigmaStats = v
 }
 
-// GetClassification returns the Classification field value if set, zero value otherwise.
-func (o *IocHashScanData) GetClassification() map[string]interface{} {
-	if o == nil || IsNil(o.Classification) {
-		var ret map[string]interface{}
+// GetClassification returns the Classification field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetClassification() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.Classification
@@ -939,11 +952,12 @@ func (o *IocHashScanData) GetClassification() map[string]interface{} {
 
 // GetClassificationOk returns a tuple with the Classification field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetClassificationOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetClassificationOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.Classification) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.Classification, true
+	return &o.Classification, true
 }
 
 // HasClassification returns a boolean if a field has been set.
@@ -955,15 +969,15 @@ func (o *IocHashScanData) HasClassification() bool {
 	return false
 }
 
-// SetClassification gets a reference to the given map[string]interface{} and assigns it to the Classification field.
-func (o *IocHashScanData) SetClassification(v map[string]interface{}) {
+// SetClassification gets a reference to the given interface{} and assigns it to the Classification field.
+func (o *IocHashScanData) SetClassification(v interface{}) {
 	o.Classification = v
 }
 
-// GetPeInfo returns the PeInfo field value if set, zero value otherwise.
-func (o *IocHashScanData) GetPeInfo() map[string]interface{} {
-	if o == nil || IsNil(o.PeInfo) {
-		var ret map[string]interface{}
+// GetPeInfo returns the PeInfo field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetPeInfo() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.PeInfo
@@ -971,11 +985,12 @@ func (o *IocHashScanData) GetPeInfo() map[string]interface{} {
 
 // GetPeInfoOk returns a tuple with the PeInfo field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetPeInfoOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetPeInfoOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.PeInfo) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.PeInfo, true
+	return &o.PeInfo, true
 }
 
 // HasPeInfo returns a boolean if a field has been set.
@@ -987,15 +1002,15 @@ func (o *IocHashScanData) HasPeInfo() bool {
 	return false
 }
 
-// SetPeInfo gets a reference to the given map[string]interface{} and assigns it to the PeInfo field.
-func (o *IocHashScanData) SetPeInfo(v map[string]interface{}) {
+// SetPeInfo gets a reference to the given interface{} and assigns it to the PeInfo field.
+func (o *IocHashScanData) SetPeInfo(v interface{}) {
 	o.PeInfo = v
 }
 
-// GetSignature returns the Signature field value if set, zero value otherwise.
-func (o *IocHashScanData) GetSignature() map[string]interface{} {
-	if o == nil || IsNil(o.Signature) {
-		var ret map[string]interface{}
+// GetSignature returns the Signature field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetSignature() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.Signature
@@ -1003,11 +1018,12 @@ func (o *IocHashScanData) GetSignature() map[string]interface{} {
 
 // GetSignatureOk returns a tuple with the Signature field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetSignatureOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetSignatureOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.Signature) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.Signature, true
+	return &o.Signature, true
 }
 
 // HasSignature returns a boolean if a field has been set.
@@ -1019,15 +1035,15 @@ func (o *IocHashScanData) HasSignature() bool {
 	return false
 }
 
-// SetSignature gets a reference to the given map[string]interface{} and assigns it to the Signature field.
-func (o *IocHashScanData) SetSignature(v map[string]interface{}) {
+// SetSignature gets a reference to the given interface{} and assigns it to the Signature field.
+func (o *IocHashScanData) SetSignature(v interface{}) {
 	o.Signature = v
 }
 
-// GetVotesResult returns the VotesResult field value if set, zero value otherwise.
-func (o *IocHashScanData) GetVotesResult() map[string]interface{} {
-	if o == nil || IsNil(o.VotesResult) {
-		var ret map[string]interface{}
+// GetVotesResult returns the VotesResult field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetVotesResult() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.VotesResult
@@ -1035,11 +1051,12 @@ func (o *IocHashScanData) GetVotesResult() map[string]interface{} {
 
 // GetVotesResultOk returns a tuple with the VotesResult field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetVotesResultOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetVotesResultOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.VotesResult) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.VotesResult, true
+	return &o.VotesResult, true
 }
 
 // HasVotesResult returns a boolean if a field has been set.
@@ -1051,15 +1068,15 @@ func (o *IocHashScanData) HasVotesResult() bool {
 	return false
 }
 
-// SetVotesResult gets a reference to the given map[string]interface{} and assigns it to the VotesResult field.
-func (o *IocHashScanData) SetVotesResult(v map[string]interface{}) {
+// SetVotesResult gets a reference to the given interface{} and assigns it to the VotesResult field.
+func (o *IocHashScanData) SetVotesResult(v interface{}) {
 	o.VotesResult = v
 }
 
-// GetSandboxVerdicts returns the SandboxVerdicts field value if set, zero value otherwise.
-func (o *IocHashScanData) GetSandboxVerdicts() map[string]interface{} {
-	if o == nil || IsNil(o.SandboxVerdicts) {
-		var ret map[string]interface{}
+// GetSandboxVerdicts returns the SandboxVerdicts field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetSandboxVerdicts() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.SandboxVerdicts
@@ -1067,11 +1084,12 @@ func (o *IocHashScanData) GetSandboxVerdicts() map[string]interface{} {
 
 // GetSandboxVerdictsOk returns a tuple with the SandboxVerdicts field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetSandboxVerdictsOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetSandboxVerdictsOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.SandboxVerdicts) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.SandboxVerdicts, true
+	return &o.SandboxVerdicts, true
 }
 
 // HasSandboxVerdicts returns a boolean if a field has been set.
@@ -1083,15 +1101,15 @@ func (o *IocHashScanData) HasSandboxVerdicts() bool {
 	return false
 }
 
-// SetSandboxVerdicts gets a reference to the given map[string]interface{} and assigns it to the SandboxVerdicts field.
-func (o *IocHashScanData) SetSandboxVerdicts(v map[string]interface{}) {
+// SetSandboxVerdicts gets a reference to the given interface{} and assigns it to the SandboxVerdicts field.
+func (o *IocHashScanData) SetSandboxVerdicts(v interface{}) {
 	o.SandboxVerdicts = v
 }
 
-// GetSecurityVendorAnalysis returns the SecurityVendorAnalysis field value if set, zero value otherwise.
-func (o *IocHashScanData) GetSecurityVendorAnalysis() map[string]interface{} {
-	if o == nil || IsNil(o.SecurityVendorAnalysis) {
-		var ret map[string]interface{}
+// GetSecurityVendorAnalysis returns the SecurityVendorAnalysis field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetSecurityVendorAnalysis() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.SecurityVendorAnalysis
@@ -1099,11 +1117,12 @@ func (o *IocHashScanData) GetSecurityVendorAnalysis() map[string]interface{} {
 
 // GetSecurityVendorAnalysisOk returns a tuple with the SecurityVendorAnalysis field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetSecurityVendorAnalysisOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetSecurityVendorAnalysisOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.SecurityVendorAnalysis) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.SecurityVendorAnalysis, true
+	return &o.SecurityVendorAnalysis, true
 }
 
 // HasSecurityVendorAnalysis returns a boolean if a field has been set.
@@ -1115,15 +1134,15 @@ func (o *IocHashScanData) HasSecurityVendorAnalysis() bool {
 	return false
 }
 
-// SetSecurityVendorAnalysis gets a reference to the given map[string]interface{} and assigns it to the SecurityVendorAnalysis field.
-func (o *IocHashScanData) SetSecurityVendorAnalysis(v map[string]interface{}) {
+// SetSecurityVendorAnalysis gets a reference to the given interface{} and assigns it to the SecurityVendorAnalysis field.
+func (o *IocHashScanData) SetSecurityVendorAnalysis(v interface{}) {
 	o.SecurityVendorAnalysis = v
 }
 
-// GetSecurityVendorAnalysisStats returns the SecurityVendorAnalysisStats field value if set, zero value otherwise.
-func (o *IocHashScanData) GetSecurityVendorAnalysisStats() map[string]interface{} {
-	if o == nil || IsNil(o.SecurityVendorAnalysisStats) {
-		var ret map[string]interface{}
+// GetSecurityVendorAnalysisStats returns the SecurityVendorAnalysisStats field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocHashScanData) GetSecurityVendorAnalysisStats() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.SecurityVendorAnalysisStats
@@ -1131,11 +1150,12 @@ func (o *IocHashScanData) GetSecurityVendorAnalysisStats() map[string]interface{
 
 // GetSecurityVendorAnalysisStatsOk returns a tuple with the SecurityVendorAnalysisStats field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocHashScanData) GetSecurityVendorAnalysisStatsOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocHashScanData) GetSecurityVendorAnalysisStatsOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.SecurityVendorAnalysisStats) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.SecurityVendorAnalysisStats, true
+	return &o.SecurityVendorAnalysisStats, true
 }
 
 // HasSecurityVendorAnalysisStats returns a boolean if a field has been set.
@@ -1147,8 +1167,8 @@ func (o *IocHashScanData) HasSecurityVendorAnalysisStats() bool {
 	return false
 }
 
-// SetSecurityVendorAnalysisStats gets a reference to the given map[string]interface{} and assigns it to the SecurityVendorAnalysisStats field.
-func (o *IocHashScanData) SetSecurityVendorAnalysisStats(v map[string]interface{}) {
+// SetSecurityVendorAnalysisStats gets a reference to the given interface{} and assigns it to the SecurityVendorAnalysisStats field.
+func (o *IocHashScanData) SetSecurityVendorAnalysisStats(v interface{}) {
 	o.SecurityVendorAnalysisStats = v
 }
 
@@ -1188,7 +1208,7 @@ func (o IocHashScanData) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Authentihash) {
 		toSerialize["authentihash"] = o.Authentihash
 	}
-	if !IsNil(o.Detectiteasy) {
+	if o.Detectiteasy != nil {
 		toSerialize["detectiteasy"] = o.Detectiteasy
 	}
 	if !IsNil(o.Trid) {
@@ -1233,31 +1253,31 @@ func (o IocHashScanData) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ContactedDomains) {
 		toSerialize["contacted_domains"] = o.ContactedDomains
 	}
-	if !IsNil(o.Sigma) {
+	if o.Sigma != nil {
 		toSerialize["sigma"] = o.Sigma
 	}
-	if !IsNil(o.SigmaStats) {
+	if o.SigmaStats != nil {
 		toSerialize["sigma_stats"] = o.SigmaStats
 	}
-	if !IsNil(o.Classification) {
+	if o.Classification != nil {
 		toSerialize["classification"] = o.Classification
 	}
-	if !IsNil(o.PeInfo) {
+	if o.PeInfo != nil {
 		toSerialize["pe_info"] = o.PeInfo
 	}
-	if !IsNil(o.Signature) {
+	if o.Signature != nil {
 		toSerialize["signature"] = o.Signature
 	}
-	if !IsNil(o.VotesResult) {
+	if o.VotesResult != nil {
 		toSerialize["votes_result"] = o.VotesResult
 	}
-	if !IsNil(o.SandboxVerdicts) {
+	if o.SandboxVerdicts != nil {
 		toSerialize["sandbox_verdicts"] = o.SandboxVerdicts
 	}
-	if !IsNil(o.SecurityVendorAnalysis) {
+	if o.SecurityVendorAnalysis != nil {
 		toSerialize["security_vendor_analysis"] = o.SecurityVendorAnalysis
 	}
-	if !IsNil(o.SecurityVendorAnalysisStats) {
+	if o.SecurityVendorAnalysisStats != nil {
 		toSerialize["security_vendor_analysis_stats"] = o.SecurityVendorAnalysisStats
 	}
 	return toSerialize, nil

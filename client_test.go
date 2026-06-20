@@ -243,6 +243,28 @@ func TestMissingAPIKeyRaises(t *testing.T) {
 	}
 }
 
+func TestHashSigmaAcceptsArrayShape(t *testing.T) {
+	// Regression: opaque upstream pass-through fields (sigma, votes_result, ...)
+	// are free-form, so a response where the API returns sigma as an ARRAY (the
+	// real-world shape that previously caused a DecodeError) decodes cleanly.
+	c, err := NewClient("sk-cs-test", WithMaxRetries(0), WithTransport(
+		roundTripFunc(func(*http.Request) (*http.Response, error) {
+			return ok(`{"hash_id":"h","search_type":"hash","sigma":[{"rule_title":"x"}],"sigma_stats":{"high":1}}`), nil
+		}),
+	))
+	if err != nil {
+		t.Fatalf("NewClient: %v", err)
+	}
+	res, err := c.VectorSnap.Hash(context.Background(), "deadbeef")
+	if err != nil {
+		t.Fatalf("sigma-as-array must decode, got error: %v", err)
+	}
+	arr, ok := res.GetSigma().([]interface{})
+	if !ok || len(arr) != 1 {
+		t.Errorf("sigma = %#v, want a 1-element array", res.GetSigma())
+	}
+}
+
 func TestDecodeErrorOnMalformedData(t *testing.T) {
 	// A 2xx, is_success:true response whose data field is the wrong shape for the
 	// typed payload surfaces a DecodeError, not a connection error.

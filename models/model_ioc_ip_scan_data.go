@@ -22,24 +22,27 @@ var _ MappedNullable = &IocIpScanData{}
 
 // IocIpScanData struct for IocIpScanData
 type IocIpScanData struct {
-	HashId                      string                   `json:"hash_id"`
-	SearchType                  string                   `json:"search_type"`
-	Ip                          *string                  `json:"ip,omitempty"`
-	Country                     *string                  `json:"country,omitempty"`
-	Reputation                  *int32                   `json:"reputation,omitempty"`
-	Tags                        []string                 `json:"tags,omitempty"`
-	Whois                       *string                  `json:"whois,omitempty"`
-	WhoisUpdateDate             *int64                   `json:"whois_update_date,omitempty"`
-	Asn                         *int64                   `json:"asn,omitempty"`
-	AsOwner                     *string                  `json:"as_owner,omitempty"`
-	Network                     *string                  `json:"network,omitempty"`
-	InternetRegistry            *string                  `json:"internet_registry,omitempty"`
-	Continent                   *string                  `json:"continent,omitempty"`
-	ModificationDate            *int64                   `json:"modification_date,omitempty"`
-	AnalysisDate                *int64                   `json:"analysis_date,omitempty"`
-	VotesResult                 map[string]interface{}   `json:"votes_result,omitempty"`
-	SecurityVendorAnalysis      map[string]interface{}   `json:"security_vendor_analysis,omitempty"`
-	SecurityVendorAnalysisStats map[string]interface{}   `json:"security_vendor_analysis_stats,omitempty"`
+	HashId           string   `json:"hash_id"`
+	SearchType       string   `json:"search_type"`
+	Ip               *string  `json:"ip,omitempty"`
+	Country          *string  `json:"country,omitempty"`
+	Reputation       *int32   `json:"reputation,omitempty"`
+	Tags             []string `json:"tags,omitempty"`
+	Whois            *string  `json:"whois,omitempty"`
+	WhoisUpdateDate  *int64   `json:"whois_update_date,omitempty"`
+	Asn              *int64   `json:"asn,omitempty"`
+	AsOwner          *string  `json:"as_owner,omitempty"`
+	Network          *string  `json:"network,omitempty"`
+	InternetRegistry *string  `json:"internet_registry,omitempty"`
+	Continent        *string  `json:"continent,omitempty"`
+	ModificationDate *int64   `json:"modification_date,omitempty"`
+	AnalysisDate     *int64   `json:"analysis_date,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	VotesResult interface{} `json:"votes_result,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	SecurityVendorAnalysis interface{} `json:"security_vendor_analysis,omitempty"`
+	// Opaque upstream pass-through; shape varies (object/array/scalar), so it is typed as free-form.
+	SecurityVendorAnalysisStats interface{}              `json:"security_vendor_analysis_stats,omitempty"`
 	ReferrerFiles               []map[string]interface{} `json:"referrerFiles,omitempty"`
 	CommunicatingFiles          []map[string]interface{} `json:"communicating_files,omitempty"`
 	Resolutions                 []map[string]interface{} `json:"resolutions,omitempty"`
@@ -530,10 +533,10 @@ func (o *IocIpScanData) SetAnalysisDate(v int64) {
 	o.AnalysisDate = &v
 }
 
-// GetVotesResult returns the VotesResult field value if set, zero value otherwise.
-func (o *IocIpScanData) GetVotesResult() map[string]interface{} {
-	if o == nil || IsNil(o.VotesResult) {
-		var ret map[string]interface{}
+// GetVotesResult returns the VotesResult field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocIpScanData) GetVotesResult() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.VotesResult
@@ -541,11 +544,12 @@ func (o *IocIpScanData) GetVotesResult() map[string]interface{} {
 
 // GetVotesResultOk returns a tuple with the VotesResult field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocIpScanData) GetVotesResultOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocIpScanData) GetVotesResultOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.VotesResult) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.VotesResult, true
+	return &o.VotesResult, true
 }
 
 // HasVotesResult returns a boolean if a field has been set.
@@ -557,15 +561,15 @@ func (o *IocIpScanData) HasVotesResult() bool {
 	return false
 }
 
-// SetVotesResult gets a reference to the given map[string]interface{} and assigns it to the VotesResult field.
-func (o *IocIpScanData) SetVotesResult(v map[string]interface{}) {
+// SetVotesResult gets a reference to the given interface{} and assigns it to the VotesResult field.
+func (o *IocIpScanData) SetVotesResult(v interface{}) {
 	o.VotesResult = v
 }
 
-// GetSecurityVendorAnalysis returns the SecurityVendorAnalysis field value if set, zero value otherwise.
-func (o *IocIpScanData) GetSecurityVendorAnalysis() map[string]interface{} {
-	if o == nil || IsNil(o.SecurityVendorAnalysis) {
-		var ret map[string]interface{}
+// GetSecurityVendorAnalysis returns the SecurityVendorAnalysis field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocIpScanData) GetSecurityVendorAnalysis() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.SecurityVendorAnalysis
@@ -573,11 +577,12 @@ func (o *IocIpScanData) GetSecurityVendorAnalysis() map[string]interface{} {
 
 // GetSecurityVendorAnalysisOk returns a tuple with the SecurityVendorAnalysis field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocIpScanData) GetSecurityVendorAnalysisOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocIpScanData) GetSecurityVendorAnalysisOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.SecurityVendorAnalysis) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.SecurityVendorAnalysis, true
+	return &o.SecurityVendorAnalysis, true
 }
 
 // HasSecurityVendorAnalysis returns a boolean if a field has been set.
@@ -589,15 +594,15 @@ func (o *IocIpScanData) HasSecurityVendorAnalysis() bool {
 	return false
 }
 
-// SetSecurityVendorAnalysis gets a reference to the given map[string]interface{} and assigns it to the SecurityVendorAnalysis field.
-func (o *IocIpScanData) SetSecurityVendorAnalysis(v map[string]interface{}) {
+// SetSecurityVendorAnalysis gets a reference to the given interface{} and assigns it to the SecurityVendorAnalysis field.
+func (o *IocIpScanData) SetSecurityVendorAnalysis(v interface{}) {
 	o.SecurityVendorAnalysis = v
 }
 
-// GetSecurityVendorAnalysisStats returns the SecurityVendorAnalysisStats field value if set, zero value otherwise.
-func (o *IocIpScanData) GetSecurityVendorAnalysisStats() map[string]interface{} {
-	if o == nil || IsNil(o.SecurityVendorAnalysisStats) {
-		var ret map[string]interface{}
+// GetSecurityVendorAnalysisStats returns the SecurityVendorAnalysisStats field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IocIpScanData) GetSecurityVendorAnalysisStats() interface{} {
+	if o == nil {
+		var ret interface{}
 		return ret
 	}
 	return o.SecurityVendorAnalysisStats
@@ -605,11 +610,12 @@ func (o *IocIpScanData) GetSecurityVendorAnalysisStats() map[string]interface{} 
 
 // GetSecurityVendorAnalysisStatsOk returns a tuple with the SecurityVendorAnalysisStats field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *IocIpScanData) GetSecurityVendorAnalysisStatsOk() (map[string]interface{}, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IocIpScanData) GetSecurityVendorAnalysisStatsOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.SecurityVendorAnalysisStats) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
-	return o.SecurityVendorAnalysisStats, true
+	return &o.SecurityVendorAnalysisStats, true
 }
 
 // HasSecurityVendorAnalysisStats returns a boolean if a field has been set.
@@ -621,8 +627,8 @@ func (o *IocIpScanData) HasSecurityVendorAnalysisStats() bool {
 	return false
 }
 
-// SetSecurityVendorAnalysisStats gets a reference to the given map[string]interface{} and assigns it to the SecurityVendorAnalysisStats field.
-func (o *IocIpScanData) SetSecurityVendorAnalysisStats(v map[string]interface{}) {
+// SetSecurityVendorAnalysisStats gets a reference to the given interface{} and assigns it to the SecurityVendorAnalysisStats field.
+func (o *IocIpScanData) SetSecurityVendorAnalysisStats(v interface{}) {
 	o.SecurityVendorAnalysisStats = v
 }
 
@@ -773,13 +779,13 @@ func (o IocIpScanData) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AnalysisDate) {
 		toSerialize["analysis_date"] = o.AnalysisDate
 	}
-	if !IsNil(o.VotesResult) {
+	if o.VotesResult != nil {
 		toSerialize["votes_result"] = o.VotesResult
 	}
-	if !IsNil(o.SecurityVendorAnalysis) {
+	if o.SecurityVendorAnalysis != nil {
 		toSerialize["security_vendor_analysis"] = o.SecurityVendorAnalysis
 	}
-	if !IsNil(o.SecurityVendorAnalysisStats) {
+	if o.SecurityVendorAnalysisStats != nil {
 		toSerialize["security_vendor_analysis_stats"] = o.SecurityVendorAnalysisStats
 	}
 	if !IsNil(o.ReferrerFiles) {
