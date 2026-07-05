@@ -15,122 +15,140 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
-// checks if the PulseUrlScanData type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &PulseUrlScanData{}
+// checks if the CountryChannelsData type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &CountryChannelsData{}
 
-// PulseUrlScanData struct for PulseUrlScanData
-type PulseUrlScanData struct {
-	// SHA-256 of the queried URL.
-	CrawlsnapHashId string `json:"crawlsnap_hash_id"`
-	SearchType      string `json:"search_type"`
-	// Threat-intelligence pulse summary. Inner shape evolves upstream and is intentionally free-form.
-	PulseDetail map[string]interface{} `json:"pulse_detail,omitempty"`
+// CountryChannelsData struct for CountryChannelsData
+type CountryChannelsData struct {
+	Country     string           `json:"country"`
+	CountrySlug string           `json:"country_slug"`
+	Channels    []CountryChannel `json:"channels"`
+	UpdatedAt   time.Time        `json:"updated_at"`
 }
 
-type _PulseUrlScanData PulseUrlScanData
+type _CountryChannelsData CountryChannelsData
 
-// NewPulseUrlScanData instantiates a new PulseUrlScanData object
+// NewCountryChannelsData instantiates a new CountryChannelsData object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPulseUrlScanData(crawlsnapHashId string, searchType string) *PulseUrlScanData {
-	this := PulseUrlScanData{}
-	this.CrawlsnapHashId = crawlsnapHashId
-	this.SearchType = searchType
+func NewCountryChannelsData(country string, countrySlug string, channels []CountryChannel, updatedAt time.Time) *CountryChannelsData {
+	this := CountryChannelsData{}
+	this.Country = country
+	this.CountrySlug = countrySlug
+	this.Channels = channels
+	this.UpdatedAt = updatedAt
 	return &this
 }
 
-// NewPulseUrlScanDataWithDefaults instantiates a new PulseUrlScanData object
+// NewCountryChannelsDataWithDefaults instantiates a new CountryChannelsData object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPulseUrlScanDataWithDefaults() *PulseUrlScanData {
-	this := PulseUrlScanData{}
+func NewCountryChannelsDataWithDefaults() *CountryChannelsData {
+	this := CountryChannelsData{}
 	return &this
 }
 
-// GetCrawlsnapHashId returns the CrawlsnapHashId field value
-func (o *PulseUrlScanData) GetCrawlsnapHashId() string {
+// GetCountry returns the Country field value
+func (o *CountryChannelsData) GetCountry() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.CrawlsnapHashId
+	return o.Country
 }
 
-// GetCrawlsnapHashIdOk returns a tuple with the CrawlsnapHashId field value
+// GetCountryOk returns a tuple with the Country field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetCrawlsnapHashIdOk() (*string, bool) {
+func (o *CountryChannelsData) GetCountryOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.CrawlsnapHashId, true
+	return &o.Country, true
 }
 
-// SetCrawlsnapHashId sets field value
-func (o *PulseUrlScanData) SetCrawlsnapHashId(v string) {
-	o.CrawlsnapHashId = v
+// SetCountry sets field value
+func (o *CountryChannelsData) SetCountry(v string) {
+	o.Country = v
 }
 
-// GetSearchType returns the SearchType field value
-func (o *PulseUrlScanData) GetSearchType() string {
+// GetCountrySlug returns the CountrySlug field value
+func (o *CountryChannelsData) GetCountrySlug() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.SearchType
+	return o.CountrySlug
 }
 
-// GetSearchTypeOk returns a tuple with the SearchType field value
+// GetCountrySlugOk returns a tuple with the CountrySlug field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetSearchTypeOk() (*string, bool) {
+func (o *CountryChannelsData) GetCountrySlugOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.SearchType, true
+	return &o.CountrySlug, true
 }
 
-// SetSearchType sets field value
-func (o *PulseUrlScanData) SetSearchType(v string) {
-	o.SearchType = v
+// SetCountrySlug sets field value
+func (o *CountryChannelsData) SetCountrySlug(v string) {
+	o.CountrySlug = v
 }
 
-// GetPulseDetail returns the PulseDetail field value if set, zero value otherwise.
-func (o *PulseUrlScanData) GetPulseDetail() map[string]interface{} {
-	if o == nil || IsNil(o.PulseDetail) {
-		var ret map[string]interface{}
+// GetChannels returns the Channels field value
+func (o *CountryChannelsData) GetChannels() []CountryChannel {
+	if o == nil {
+		var ret []CountryChannel
 		return ret
 	}
-	return o.PulseDetail
+
+	return o.Channels
 }
 
-// GetPulseDetailOk returns a tuple with the PulseDetail field value if set, nil otherwise
+// GetChannelsOk returns a tuple with the Channels field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetPulseDetailOk() (map[string]interface{}, bool) {
-	if o == nil || IsNil(o.PulseDetail) {
-		return map[string]interface{}{}, false
+func (o *CountryChannelsData) GetChannelsOk() ([]CountryChannel, bool) {
+	if o == nil {
+		return nil, false
 	}
-	return o.PulseDetail, true
+	return o.Channels, true
 }
 
-// HasPulseDetail returns a boolean if a field has been set.
-func (o *PulseUrlScanData) HasPulseDetail() bool {
-	if o != nil && !IsNil(o.PulseDetail) {
-		return true
+// SetChannels sets field value
+func (o *CountryChannelsData) SetChannels(v []CountryChannel) {
+	o.Channels = v
+}
+
+// GetUpdatedAt returns the UpdatedAt field value
+func (o *CountryChannelsData) GetUpdatedAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
 	}
 
-	return false
+	return o.UpdatedAt
 }
 
-// SetPulseDetail gets a reference to the given map[string]interface{} and assigns it to the PulseDetail field.
-func (o *PulseUrlScanData) SetPulseDetail(v map[string]interface{}) {
-	o.PulseDetail = v
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
+// and a boolean to check if the value has been set.
+func (o *CountryChannelsData) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.UpdatedAt, true
 }
 
-func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
+// SetUpdatedAt sets field value
+func (o *CountryChannelsData) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = v
+}
+
+func (o CountryChannelsData) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -138,23 +156,24 @@ func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o PulseUrlScanData) ToMap() (map[string]interface{}, error) {
+func (o CountryChannelsData) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["crawlsnap_hash_id"] = o.CrawlsnapHashId
-	toSerialize["search_type"] = o.SearchType
-	if !IsNil(o.PulseDetail) {
-		toSerialize["pulse_detail"] = o.PulseDetail
-	}
+	toSerialize["country"] = o.Country
+	toSerialize["country_slug"] = o.CountrySlug
+	toSerialize["channels"] = o.Channels
+	toSerialize["updated_at"] = o.UpdatedAt
 	return toSerialize, nil
 }
 
-func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
+func (o *CountryChannelsData) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"crawlsnap_hash_id",
-		"search_type",
+		"country",
+		"country_slug",
+		"channels",
+		"updated_at",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -171,53 +190,53 @@ func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varPulseUrlScanData := _PulseUrlScanData{}
+	varCountryChannelsData := _CountryChannelsData{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPulseUrlScanData)
+	err = decoder.Decode(&varCountryChannelsData)
 
 	if err != nil {
 		return err
 	}
 
-	*o = PulseUrlScanData(varPulseUrlScanData)
+	*o = CountryChannelsData(varCountryChannelsData)
 
 	return err
 }
 
-type NullablePulseUrlScanData struct {
-	value *PulseUrlScanData
+type NullableCountryChannelsData struct {
+	value *CountryChannelsData
 	isSet bool
 }
 
-func (v NullablePulseUrlScanData) Get() *PulseUrlScanData {
+func (v NullableCountryChannelsData) Get() *CountryChannelsData {
 	return v.value
 }
 
-func (v *NullablePulseUrlScanData) Set(val *PulseUrlScanData) {
+func (v *NullableCountryChannelsData) Set(val *CountryChannelsData) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePulseUrlScanData) IsSet() bool {
+func (v NullableCountryChannelsData) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePulseUrlScanData) Unset() {
+func (v *NullableCountryChannelsData) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePulseUrlScanData(val *PulseUrlScanData) *NullablePulseUrlScanData {
-	return &NullablePulseUrlScanData{value: val, isSet: true}
+func NewNullableCountryChannelsData(val *CountryChannelsData) *NullableCountryChannelsData {
+	return &NullableCountryChannelsData{value: val, isSet: true}
 }
 
-func (v NullablePulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (v NullableCountryChannelsData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePulseUrlScanData) UnmarshalJSON(src []byte) error {
+func (v *NullableCountryChannelsData) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

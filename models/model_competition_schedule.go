@@ -17,120 +17,85 @@ import (
 	"fmt"
 )
 
-// checks if the PulseUrlScanData type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &PulseUrlScanData{}
+// checks if the CompetitionSchedule type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &CompetitionSchedule{}
 
-// PulseUrlScanData struct for PulseUrlScanData
-type PulseUrlScanData struct {
-	// SHA-256 of the queried URL.
-	CrawlsnapHashId string `json:"crawlsnap_hash_id"`
-	SearchType      string `json:"search_type"`
-	// Threat-intelligence pulse summary. Inner shape evolves upstream and is intentionally free-form.
-	PulseDetail map[string]interface{} `json:"pulse_detail,omitempty"`
+// CompetitionSchedule struct for CompetitionSchedule
+type CompetitionSchedule struct {
+	Competition string           `json:"competition"`
+	Matches     []ScheduledMatch `json:"matches"`
 }
 
-type _PulseUrlScanData PulseUrlScanData
+type _CompetitionSchedule CompetitionSchedule
 
-// NewPulseUrlScanData instantiates a new PulseUrlScanData object
+// NewCompetitionSchedule instantiates a new CompetitionSchedule object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPulseUrlScanData(crawlsnapHashId string, searchType string) *PulseUrlScanData {
-	this := PulseUrlScanData{}
-	this.CrawlsnapHashId = crawlsnapHashId
-	this.SearchType = searchType
+func NewCompetitionSchedule(competition string, matches []ScheduledMatch) *CompetitionSchedule {
+	this := CompetitionSchedule{}
+	this.Competition = competition
+	this.Matches = matches
 	return &this
 }
 
-// NewPulseUrlScanDataWithDefaults instantiates a new PulseUrlScanData object
+// NewCompetitionScheduleWithDefaults instantiates a new CompetitionSchedule object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPulseUrlScanDataWithDefaults() *PulseUrlScanData {
-	this := PulseUrlScanData{}
+func NewCompetitionScheduleWithDefaults() *CompetitionSchedule {
+	this := CompetitionSchedule{}
 	return &this
 }
 
-// GetCrawlsnapHashId returns the CrawlsnapHashId field value
-func (o *PulseUrlScanData) GetCrawlsnapHashId() string {
+// GetCompetition returns the Competition field value
+func (o *CompetitionSchedule) GetCompetition() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.CrawlsnapHashId
+	return o.Competition
 }
 
-// GetCrawlsnapHashIdOk returns a tuple with the CrawlsnapHashId field value
+// GetCompetitionOk returns a tuple with the Competition field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetCrawlsnapHashIdOk() (*string, bool) {
+func (o *CompetitionSchedule) GetCompetitionOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.CrawlsnapHashId, true
+	return &o.Competition, true
 }
 
-// SetCrawlsnapHashId sets field value
-func (o *PulseUrlScanData) SetCrawlsnapHashId(v string) {
-	o.CrawlsnapHashId = v
+// SetCompetition sets field value
+func (o *CompetitionSchedule) SetCompetition(v string) {
+	o.Competition = v
 }
 
-// GetSearchType returns the SearchType field value
-func (o *PulseUrlScanData) GetSearchType() string {
+// GetMatches returns the Matches field value
+func (o *CompetitionSchedule) GetMatches() []ScheduledMatch {
 	if o == nil {
-		var ret string
+		var ret []ScheduledMatch
 		return ret
 	}
 
-	return o.SearchType
+	return o.Matches
 }
 
-// GetSearchTypeOk returns a tuple with the SearchType field value
+// GetMatchesOk returns a tuple with the Matches field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetSearchTypeOk() (*string, bool) {
+func (o *CompetitionSchedule) GetMatchesOk() ([]ScheduledMatch, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.SearchType, true
+	return o.Matches, true
 }
 
-// SetSearchType sets field value
-func (o *PulseUrlScanData) SetSearchType(v string) {
-	o.SearchType = v
+// SetMatches sets field value
+func (o *CompetitionSchedule) SetMatches(v []ScheduledMatch) {
+	o.Matches = v
 }
 
-// GetPulseDetail returns the PulseDetail field value if set, zero value otherwise.
-func (o *PulseUrlScanData) GetPulseDetail() map[string]interface{} {
-	if o == nil || IsNil(o.PulseDetail) {
-		var ret map[string]interface{}
-		return ret
-	}
-	return o.PulseDetail
-}
-
-// GetPulseDetailOk returns a tuple with the PulseDetail field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetPulseDetailOk() (map[string]interface{}, bool) {
-	if o == nil || IsNil(o.PulseDetail) {
-		return map[string]interface{}{}, false
-	}
-	return o.PulseDetail, true
-}
-
-// HasPulseDetail returns a boolean if a field has been set.
-func (o *PulseUrlScanData) HasPulseDetail() bool {
-	if o != nil && !IsNil(o.PulseDetail) {
-		return true
-	}
-
-	return false
-}
-
-// SetPulseDetail gets a reference to the given map[string]interface{} and assigns it to the PulseDetail field.
-func (o *PulseUrlScanData) SetPulseDetail(v map[string]interface{}) {
-	o.PulseDetail = v
-}
-
-func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (o CompetitionSchedule) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -138,23 +103,20 @@ func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o PulseUrlScanData) ToMap() (map[string]interface{}, error) {
+func (o CompetitionSchedule) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["crawlsnap_hash_id"] = o.CrawlsnapHashId
-	toSerialize["search_type"] = o.SearchType
-	if !IsNil(o.PulseDetail) {
-		toSerialize["pulse_detail"] = o.PulseDetail
-	}
+	toSerialize["competition"] = o.Competition
+	toSerialize["matches"] = o.Matches
 	return toSerialize, nil
 }
 
-func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
+func (o *CompetitionSchedule) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"crawlsnap_hash_id",
-		"search_type",
+		"competition",
+		"matches",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -171,53 +133,53 @@ func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varPulseUrlScanData := _PulseUrlScanData{}
+	varCompetitionSchedule := _CompetitionSchedule{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPulseUrlScanData)
+	err = decoder.Decode(&varCompetitionSchedule)
 
 	if err != nil {
 		return err
 	}
 
-	*o = PulseUrlScanData(varPulseUrlScanData)
+	*o = CompetitionSchedule(varCompetitionSchedule)
 
 	return err
 }
 
-type NullablePulseUrlScanData struct {
-	value *PulseUrlScanData
+type NullableCompetitionSchedule struct {
+	value *CompetitionSchedule
 	isSet bool
 }
 
-func (v NullablePulseUrlScanData) Get() *PulseUrlScanData {
+func (v NullableCompetitionSchedule) Get() *CompetitionSchedule {
 	return v.value
 }
 
-func (v *NullablePulseUrlScanData) Set(val *PulseUrlScanData) {
+func (v *NullableCompetitionSchedule) Set(val *CompetitionSchedule) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePulseUrlScanData) IsSet() bool {
+func (v NullableCompetitionSchedule) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePulseUrlScanData) Unset() {
+func (v *NullableCompetitionSchedule) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePulseUrlScanData(val *PulseUrlScanData) *NullablePulseUrlScanData {
-	return &NullablePulseUrlScanData{value: val, isSet: true}
+func NewNullableCompetitionSchedule(val *CompetitionSchedule) *NullableCompetitionSchedule {
+	return &NullableCompetitionSchedule{value: val, isSet: true}
 }
 
-func (v NullablePulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (v NullableCompetitionSchedule) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePulseUrlScanData) UnmarshalJSON(src []byte) error {
+func (v *NullableCompetitionSchedule) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

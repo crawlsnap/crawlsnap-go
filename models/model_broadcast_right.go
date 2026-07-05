@@ -17,120 +17,132 @@ import (
 	"fmt"
 )
 
-// checks if the PulseUrlScanData type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &PulseUrlScanData{}
+// checks if the BroadcastRight type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &BroadcastRight{}
 
-// PulseUrlScanData struct for PulseUrlScanData
-type PulseUrlScanData struct {
-	// SHA-256 of the queried URL.
-	CrawlsnapHashId string `json:"crawlsnap_hash_id"`
-	SearchType      string `json:"search_type"`
-	// Threat-intelligence pulse summary. Inner shape evolves upstream and is intentionally free-form.
-	PulseDetail map[string]interface{} `json:"pulse_detail,omitempty"`
+// BroadcastRight struct for BroadcastRight
+type BroadcastRight struct {
+	// Competition display name, e.g. \"England - Premier League\".
+	Competition string `json:"competition"`
+	// First year of the rights window, e.g. 2024.
+	YearStart int32 `json:"year_start"`
+	// Last year of the rights window; null when open-ended or unspecified.
+	YearEnd NullableInt32 `json:"year_end,omitempty"`
 }
 
-type _PulseUrlScanData PulseUrlScanData
+type _BroadcastRight BroadcastRight
 
-// NewPulseUrlScanData instantiates a new PulseUrlScanData object
+// NewBroadcastRight instantiates a new BroadcastRight object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPulseUrlScanData(crawlsnapHashId string, searchType string) *PulseUrlScanData {
-	this := PulseUrlScanData{}
-	this.CrawlsnapHashId = crawlsnapHashId
-	this.SearchType = searchType
+func NewBroadcastRight(competition string, yearStart int32) *BroadcastRight {
+	this := BroadcastRight{}
+	this.Competition = competition
+	this.YearStart = yearStart
 	return &this
 }
 
-// NewPulseUrlScanDataWithDefaults instantiates a new PulseUrlScanData object
+// NewBroadcastRightWithDefaults instantiates a new BroadcastRight object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPulseUrlScanDataWithDefaults() *PulseUrlScanData {
-	this := PulseUrlScanData{}
+func NewBroadcastRightWithDefaults() *BroadcastRight {
+	this := BroadcastRight{}
 	return &this
 }
 
-// GetCrawlsnapHashId returns the CrawlsnapHashId field value
-func (o *PulseUrlScanData) GetCrawlsnapHashId() string {
+// GetCompetition returns the Competition field value
+func (o *BroadcastRight) GetCompetition() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.CrawlsnapHashId
+	return o.Competition
 }
 
-// GetCrawlsnapHashIdOk returns a tuple with the CrawlsnapHashId field value
+// GetCompetitionOk returns a tuple with the Competition field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetCrawlsnapHashIdOk() (*string, bool) {
+func (o *BroadcastRight) GetCompetitionOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.CrawlsnapHashId, true
+	return &o.Competition, true
 }
 
-// SetCrawlsnapHashId sets field value
-func (o *PulseUrlScanData) SetCrawlsnapHashId(v string) {
-	o.CrawlsnapHashId = v
+// SetCompetition sets field value
+func (o *BroadcastRight) SetCompetition(v string) {
+	o.Competition = v
 }
 
-// GetSearchType returns the SearchType field value
-func (o *PulseUrlScanData) GetSearchType() string {
+// GetYearStart returns the YearStart field value
+func (o *BroadcastRight) GetYearStart() int32 {
 	if o == nil {
-		var ret string
+		var ret int32
 		return ret
 	}
 
-	return o.SearchType
+	return o.YearStart
 }
 
-// GetSearchTypeOk returns a tuple with the SearchType field value
+// GetYearStartOk returns a tuple with the YearStart field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetSearchTypeOk() (*string, bool) {
+func (o *BroadcastRight) GetYearStartOk() (*int32, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.SearchType, true
+	return &o.YearStart, true
 }
 
-// SetSearchType sets field value
-func (o *PulseUrlScanData) SetSearchType(v string) {
-	o.SearchType = v
+// SetYearStart sets field value
+func (o *BroadcastRight) SetYearStart(v int32) {
+	o.YearStart = v
 }
 
-// GetPulseDetail returns the PulseDetail field value if set, zero value otherwise.
-func (o *PulseUrlScanData) GetPulseDetail() map[string]interface{} {
-	if o == nil || IsNil(o.PulseDetail) {
-		var ret map[string]interface{}
+// GetYearEnd returns the YearEnd field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BroadcastRight) GetYearEnd() int32 {
+	if o == nil || IsNil(o.YearEnd.Get()) {
+		var ret int32
 		return ret
 	}
-	return o.PulseDetail
+	return *o.YearEnd.Get()
 }
 
-// GetPulseDetailOk returns a tuple with the PulseDetail field value if set, nil otherwise
+// GetYearEndOk returns a tuple with the YearEnd field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetPulseDetailOk() (map[string]interface{}, bool) {
-	if o == nil || IsNil(o.PulseDetail) {
-		return map[string]interface{}{}, false
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BroadcastRight) GetYearEndOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
 	}
-	return o.PulseDetail, true
+	return o.YearEnd.Get(), o.YearEnd.IsSet()
 }
 
-// HasPulseDetail returns a boolean if a field has been set.
-func (o *PulseUrlScanData) HasPulseDetail() bool {
-	if o != nil && !IsNil(o.PulseDetail) {
+// HasYearEnd returns a boolean if a field has been set.
+func (o *BroadcastRight) HasYearEnd() bool {
+	if o != nil && o.YearEnd.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetPulseDetail gets a reference to the given map[string]interface{} and assigns it to the PulseDetail field.
-func (o *PulseUrlScanData) SetPulseDetail(v map[string]interface{}) {
-	o.PulseDetail = v
+// SetYearEnd gets a reference to the given NullableInt32 and assigns it to the YearEnd field.
+func (o *BroadcastRight) SetYearEnd(v int32) {
+	o.YearEnd.Set(&v)
 }
 
-func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
+// SetYearEndNil sets the value for YearEnd to be an explicit nil
+func (o *BroadcastRight) SetYearEndNil() {
+	o.YearEnd.Set(nil)
+}
+
+// UnsetYearEnd ensures that no value is present for YearEnd, not even an explicit nil
+func (o *BroadcastRight) UnsetYearEnd() {
+	o.YearEnd.Unset()
+}
+
+func (o BroadcastRight) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -138,23 +150,23 @@ func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o PulseUrlScanData) ToMap() (map[string]interface{}, error) {
+func (o BroadcastRight) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["crawlsnap_hash_id"] = o.CrawlsnapHashId
-	toSerialize["search_type"] = o.SearchType
-	if !IsNil(o.PulseDetail) {
-		toSerialize["pulse_detail"] = o.PulseDetail
+	toSerialize["competition"] = o.Competition
+	toSerialize["year_start"] = o.YearStart
+	if o.YearEnd.IsSet() {
+		toSerialize["year_end"] = o.YearEnd.Get()
 	}
 	return toSerialize, nil
 }
 
-func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
+func (o *BroadcastRight) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"crawlsnap_hash_id",
-		"search_type",
+		"competition",
+		"year_start",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -171,53 +183,53 @@ func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varPulseUrlScanData := _PulseUrlScanData{}
+	varBroadcastRight := _BroadcastRight{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPulseUrlScanData)
+	err = decoder.Decode(&varBroadcastRight)
 
 	if err != nil {
 		return err
 	}
 
-	*o = PulseUrlScanData(varPulseUrlScanData)
+	*o = BroadcastRight(varBroadcastRight)
 
 	return err
 }
 
-type NullablePulseUrlScanData struct {
-	value *PulseUrlScanData
+type NullableBroadcastRight struct {
+	value *BroadcastRight
 	isSet bool
 }
 
-func (v NullablePulseUrlScanData) Get() *PulseUrlScanData {
+func (v NullableBroadcastRight) Get() *BroadcastRight {
 	return v.value
 }
 
-func (v *NullablePulseUrlScanData) Set(val *PulseUrlScanData) {
+func (v *NullableBroadcastRight) Set(val *BroadcastRight) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePulseUrlScanData) IsSet() bool {
+func (v NullableBroadcastRight) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePulseUrlScanData) Unset() {
+func (v *NullableBroadcastRight) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePulseUrlScanData(val *PulseUrlScanData) *NullablePulseUrlScanData {
-	return &NullablePulseUrlScanData{value: val, isSet: true}
+func NewNullableBroadcastRight(val *BroadcastRight) *NullableBroadcastRight {
+	return &NullableBroadcastRight{value: val, isSet: true}
 }
 
-func (v NullablePulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (v NullableBroadcastRight) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePulseUrlScanData) UnmarshalJSON(src []byte) error {
+func (v *NullableBroadcastRight) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

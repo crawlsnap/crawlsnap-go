@@ -4,7 +4,9 @@ import (
 	"context"
 	"iter"
 	"net/url"
+	"strconv"
 	"sync"
+	"time"
 
 	"github.com/crawlsnap/crawlsnap-go/models"
 )
@@ -202,4 +204,71 @@ func (r *SubdoSnap) ScanIter(ctx context.Context, query string) iter.Seq2[map[st
 			}
 		}
 	}
+}
+
+// --------------------------------------------------------------------------
+// SportSnap — live football (soccer) TV listings.
+// --------------------------------------------------------------------------
+
+// SportSnap is the live football TV listings resource: channel metadata and
+// broadcast schedules, match details with per-country coverage (score, events,
+// statistics, and lineups for finished matches), country channel directories,
+// and daily schedules. A direct call uses the stable default API version; pin
+// explicitly with V1().
+type SportSnap struct {
+	client  *Client
+	version string
+	cache   versionCache[SportSnap]
+}
+
+func newSportSnap(c *Client) *SportSnap {
+	return &SportSnap{client: c, version: DefaultVersion}
+}
+
+// V1 pins SportSnap to API version v1.
+func (r *SportSnap) V1() *SportSnap {
+	return r.cache.pin("v1", func(v string) *SportSnap {
+		return &SportSnap{client: r.client, version: v}
+	})
+}
+
+// Channel returns TV channel metadata and competition broadcast rights for a
+// channel slug (e.g. "bein-connect-turkey").
+func (r *SportSnap) Channel(ctx context.Context, slug string, opts ...RequestOption) (models.ChannelData, error) {
+	return doGet[models.ChannelData](ctx, r.client, "/"+r.version+"/sport-snap/channels/"+url.PathEscape(slug), nil, opts...)
+}
+
+// ChannelSchedule returns the channel's upcoming broadcast listings (day,
+// kickoff, match, competition). Entries may be empty when the channel has no
+// upcoming listings — that is a valid result, not an error.
+func (r *SportSnap) ChannelSchedule(ctx context.Context, slug string, opts ...RequestOption) (models.ChannelScheduleData, error) {
+	return doGet[models.ChannelScheduleData](ctx, r.client, "/"+r.version+"/sport-snap/channels/"+url.PathEscape(slug)+"/schedule", nil, opts...)
+}
+
+// Match returns match details keyed by the numeric match id. Status
+// discriminates the payload: "scheduled" carries meta + broadcasts only;
+// "live" and "finished" additionally carry score, events, statistics, and
+// lineups as available. Match ids are discovered via DailySchedule and
+// ChannelSchedule entries.
+func (r *SportSnap) Match(ctx context.Context, id int64, opts ...RequestOption) (models.MatchData, error) {
+	return doGet[models.MatchData](ctx, r.client, "/"+r.version+"/sport-snap/matches/"+strconv.FormatInt(id, 10), nil, opts...)
+}
+
+// CountryChannels returns the TV channels known for a country (slugified name,
+// e.g. "turkey", "united-states").
+func (r *SportSnap) CountryChannels(ctx context.Context, country string, opts ...RequestOption) (models.CountryChannelsData, error) {
+	return doGet[models.CountryChannelsData](ctx, r.client, "/"+r.version+"/sport-snap/countries/"+url.PathEscape(country)+"/channels", nil, opts...)
+}
+
+// DailySchedule returns the full broadcast schedule for a date (YYYY-MM-DD),
+// grouped by competition, with kickoff times normalized to UTC. Use
+// DailyScheduleTime to pass a time.Time instead.
+func (r *SportSnap) DailySchedule(ctx context.Context, date string, opts ...RequestOption) (models.DailyScheduleData, error) {
+	return doGet[models.DailyScheduleData](ctx, r.client, "/"+r.version+"/sport-snap/schedules/"+url.PathEscape(date), nil, opts...)
+}
+
+// DailyScheduleTime is DailySchedule with the date taken from a time.Time
+// (formatted as YYYY-MM-DD in the time's location).
+func (r *SportSnap) DailyScheduleTime(ctx context.Context, date time.Time, opts ...RequestOption) (models.DailyScheduleData, error) {
+	return r.DailySchedule(ctx, date.Format("2006-01-02"), opts...)
 }

@@ -37,6 +37,7 @@ type Client struct {
 	VectorSnap *VectorSnap
 	PulseSnap  *PulseSnap
 	SubdoSnap  *SubdoSnap
+	SportSnap  *SportSnap
 }
 
 type clientConfig struct {
@@ -119,6 +120,7 @@ func NewClient(apiKey string, opts ...Option) (*Client, error) {
 	c.VectorSnap = newVectorSnap(c)
 	c.PulseSnap = newPulseSnap(c)
 	c.SubdoSnap = newSubdoSnap(c)
+	c.SportSnap = newSportSnap(c)
 	return c, nil
 }
 

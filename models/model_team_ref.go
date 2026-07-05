@@ -17,120 +17,59 @@ import (
 	"fmt"
 )
 
-// checks if the PulseUrlScanData type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &PulseUrlScanData{}
+// checks if the TeamRef type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &TeamRef{}
 
-// PulseUrlScanData struct for PulseUrlScanData
-type PulseUrlScanData struct {
-	// SHA-256 of the queried URL.
-	CrawlsnapHashId string `json:"crawlsnap_hash_id"`
-	SearchType      string `json:"search_type"`
-	// Threat-intelligence pulse summary. Inner shape evolves upstream and is intentionally free-form.
-	PulseDetail map[string]interface{} `json:"pulse_detail,omitempty"`
+// TeamRef struct for TeamRef
+type TeamRef struct {
+	Name string `json:"name"`
 }
 
-type _PulseUrlScanData PulseUrlScanData
+type _TeamRef TeamRef
 
-// NewPulseUrlScanData instantiates a new PulseUrlScanData object
+// NewTeamRef instantiates a new TeamRef object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPulseUrlScanData(crawlsnapHashId string, searchType string) *PulseUrlScanData {
-	this := PulseUrlScanData{}
-	this.CrawlsnapHashId = crawlsnapHashId
-	this.SearchType = searchType
+func NewTeamRef(name string) *TeamRef {
+	this := TeamRef{}
+	this.Name = name
 	return &this
 }
 
-// NewPulseUrlScanDataWithDefaults instantiates a new PulseUrlScanData object
+// NewTeamRefWithDefaults instantiates a new TeamRef object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPulseUrlScanDataWithDefaults() *PulseUrlScanData {
-	this := PulseUrlScanData{}
+func NewTeamRefWithDefaults() *TeamRef {
+	this := TeamRef{}
 	return &this
 }
 
-// GetCrawlsnapHashId returns the CrawlsnapHashId field value
-func (o *PulseUrlScanData) GetCrawlsnapHashId() string {
+// GetName returns the Name field value
+func (o *TeamRef) GetName() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.CrawlsnapHashId
+	return o.Name
 }
 
-// GetCrawlsnapHashIdOk returns a tuple with the CrawlsnapHashId field value
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetCrawlsnapHashIdOk() (*string, bool) {
+func (o *TeamRef) GetNameOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.CrawlsnapHashId, true
+	return &o.Name, true
 }
 
-// SetCrawlsnapHashId sets field value
-func (o *PulseUrlScanData) SetCrawlsnapHashId(v string) {
-	o.CrawlsnapHashId = v
+// SetName sets field value
+func (o *TeamRef) SetName(v string) {
+	o.Name = v
 }
 
-// GetSearchType returns the SearchType field value
-func (o *PulseUrlScanData) GetSearchType() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.SearchType
-}
-
-// GetSearchTypeOk returns a tuple with the SearchType field value
-// and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetSearchTypeOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.SearchType, true
-}
-
-// SetSearchType sets field value
-func (o *PulseUrlScanData) SetSearchType(v string) {
-	o.SearchType = v
-}
-
-// GetPulseDetail returns the PulseDetail field value if set, zero value otherwise.
-func (o *PulseUrlScanData) GetPulseDetail() map[string]interface{} {
-	if o == nil || IsNil(o.PulseDetail) {
-		var ret map[string]interface{}
-		return ret
-	}
-	return o.PulseDetail
-}
-
-// GetPulseDetailOk returns a tuple with the PulseDetail field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetPulseDetailOk() (map[string]interface{}, bool) {
-	if o == nil || IsNil(o.PulseDetail) {
-		return map[string]interface{}{}, false
-	}
-	return o.PulseDetail, true
-}
-
-// HasPulseDetail returns a boolean if a field has been set.
-func (o *PulseUrlScanData) HasPulseDetail() bool {
-	if o != nil && !IsNil(o.PulseDetail) {
-		return true
-	}
-
-	return false
-}
-
-// SetPulseDetail gets a reference to the given map[string]interface{} and assigns it to the PulseDetail field.
-func (o *PulseUrlScanData) SetPulseDetail(v map[string]interface{}) {
-	o.PulseDetail = v
-}
-
-func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (o TeamRef) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -138,23 +77,18 @@ func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o PulseUrlScanData) ToMap() (map[string]interface{}, error) {
+func (o TeamRef) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["crawlsnap_hash_id"] = o.CrawlsnapHashId
-	toSerialize["search_type"] = o.SearchType
-	if !IsNil(o.PulseDetail) {
-		toSerialize["pulse_detail"] = o.PulseDetail
-	}
+	toSerialize["name"] = o.Name
 	return toSerialize, nil
 }
 
-func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
+func (o *TeamRef) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"crawlsnap_hash_id",
-		"search_type",
+		"name",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -171,53 +105,53 @@ func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varPulseUrlScanData := _PulseUrlScanData{}
+	varTeamRef := _TeamRef{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPulseUrlScanData)
+	err = decoder.Decode(&varTeamRef)
 
 	if err != nil {
 		return err
 	}
 
-	*o = PulseUrlScanData(varPulseUrlScanData)
+	*o = TeamRef(varTeamRef)
 
 	return err
 }
 
-type NullablePulseUrlScanData struct {
-	value *PulseUrlScanData
+type NullableTeamRef struct {
+	value *TeamRef
 	isSet bool
 }
 
-func (v NullablePulseUrlScanData) Get() *PulseUrlScanData {
+func (v NullableTeamRef) Get() *TeamRef {
 	return v.value
 }
 
-func (v *NullablePulseUrlScanData) Set(val *PulseUrlScanData) {
+func (v *NullableTeamRef) Set(val *TeamRef) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePulseUrlScanData) IsSet() bool {
+func (v NullableTeamRef) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePulseUrlScanData) Unset() {
+func (v *NullableTeamRef) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePulseUrlScanData(val *PulseUrlScanData) *NullablePulseUrlScanData {
-	return &NullablePulseUrlScanData{value: val, isSet: true}
+func NewNullableTeamRef(val *TeamRef) *NullableTeamRef {
+	return &NullableTeamRef{value: val, isSet: true}
 }
 
-func (v NullablePulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (v NullableTeamRef) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePulseUrlScanData) UnmarshalJSON(src []byte) error {
+func (v *NullableTeamRef) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

@@ -15,122 +15,141 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
-// checks if the PulseUrlScanData type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &PulseUrlScanData{}
+// checks if the ChannelScheduleData type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &ChannelScheduleData{}
 
-// PulseUrlScanData struct for PulseUrlScanData
-type PulseUrlScanData struct {
-	// SHA-256 of the queried URL.
-	CrawlsnapHashId string `json:"crawlsnap_hash_id"`
-	SearchType      string `json:"search_type"`
-	// Threat-intelligence pulse summary. Inner shape evolves upstream and is intentionally free-form.
-	PulseDetail map[string]interface{} `json:"pulse_detail,omitempty"`
+// ChannelScheduleData struct for ChannelScheduleData
+type ChannelScheduleData struct {
+	Slug string `json:"slug"`
+	Name string `json:"name"`
+	// Empty array when the channel has no upcoming listings.
+	Entries   []ChannelScheduleEntry `json:"entries"`
+	UpdatedAt time.Time              `json:"updated_at"`
 }
 
-type _PulseUrlScanData PulseUrlScanData
+type _ChannelScheduleData ChannelScheduleData
 
-// NewPulseUrlScanData instantiates a new PulseUrlScanData object
+// NewChannelScheduleData instantiates a new ChannelScheduleData object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPulseUrlScanData(crawlsnapHashId string, searchType string) *PulseUrlScanData {
-	this := PulseUrlScanData{}
-	this.CrawlsnapHashId = crawlsnapHashId
-	this.SearchType = searchType
+func NewChannelScheduleData(slug string, name string, entries []ChannelScheduleEntry, updatedAt time.Time) *ChannelScheduleData {
+	this := ChannelScheduleData{}
+	this.Slug = slug
+	this.Name = name
+	this.Entries = entries
+	this.UpdatedAt = updatedAt
 	return &this
 }
 
-// NewPulseUrlScanDataWithDefaults instantiates a new PulseUrlScanData object
+// NewChannelScheduleDataWithDefaults instantiates a new ChannelScheduleData object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPulseUrlScanDataWithDefaults() *PulseUrlScanData {
-	this := PulseUrlScanData{}
+func NewChannelScheduleDataWithDefaults() *ChannelScheduleData {
+	this := ChannelScheduleData{}
 	return &this
 }
 
-// GetCrawlsnapHashId returns the CrawlsnapHashId field value
-func (o *PulseUrlScanData) GetCrawlsnapHashId() string {
+// GetSlug returns the Slug field value
+func (o *ChannelScheduleData) GetSlug() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.CrawlsnapHashId
+	return o.Slug
 }
 
-// GetCrawlsnapHashIdOk returns a tuple with the CrawlsnapHashId field value
+// GetSlugOk returns a tuple with the Slug field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetCrawlsnapHashIdOk() (*string, bool) {
+func (o *ChannelScheduleData) GetSlugOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.CrawlsnapHashId, true
+	return &o.Slug, true
 }
 
-// SetCrawlsnapHashId sets field value
-func (o *PulseUrlScanData) SetCrawlsnapHashId(v string) {
-	o.CrawlsnapHashId = v
+// SetSlug sets field value
+func (o *ChannelScheduleData) SetSlug(v string) {
+	o.Slug = v
 }
 
-// GetSearchType returns the SearchType field value
-func (o *PulseUrlScanData) GetSearchType() string {
+// GetName returns the Name field value
+func (o *ChannelScheduleData) GetName() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.SearchType
+	return o.Name
 }
 
-// GetSearchTypeOk returns a tuple with the SearchType field value
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetSearchTypeOk() (*string, bool) {
+func (o *ChannelScheduleData) GetNameOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.SearchType, true
+	return &o.Name, true
 }
 
-// SetSearchType sets field value
-func (o *PulseUrlScanData) SetSearchType(v string) {
-	o.SearchType = v
+// SetName sets field value
+func (o *ChannelScheduleData) SetName(v string) {
+	o.Name = v
 }
 
-// GetPulseDetail returns the PulseDetail field value if set, zero value otherwise.
-func (o *PulseUrlScanData) GetPulseDetail() map[string]interface{} {
-	if o == nil || IsNil(o.PulseDetail) {
-		var ret map[string]interface{}
+// GetEntries returns the Entries field value
+func (o *ChannelScheduleData) GetEntries() []ChannelScheduleEntry {
+	if o == nil {
+		var ret []ChannelScheduleEntry
 		return ret
 	}
-	return o.PulseDetail
+
+	return o.Entries
 }
 
-// GetPulseDetailOk returns a tuple with the PulseDetail field value if set, nil otherwise
+// GetEntriesOk returns a tuple with the Entries field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetPulseDetailOk() (map[string]interface{}, bool) {
-	if o == nil || IsNil(o.PulseDetail) {
-		return map[string]interface{}{}, false
+func (o *ChannelScheduleData) GetEntriesOk() ([]ChannelScheduleEntry, bool) {
+	if o == nil {
+		return nil, false
 	}
-	return o.PulseDetail, true
+	return o.Entries, true
 }
 
-// HasPulseDetail returns a boolean if a field has been set.
-func (o *PulseUrlScanData) HasPulseDetail() bool {
-	if o != nil && !IsNil(o.PulseDetail) {
-		return true
+// SetEntries sets field value
+func (o *ChannelScheduleData) SetEntries(v []ChannelScheduleEntry) {
+	o.Entries = v
+}
+
+// GetUpdatedAt returns the UpdatedAt field value
+func (o *ChannelScheduleData) GetUpdatedAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
 	}
 
-	return false
+	return o.UpdatedAt
 }
 
-// SetPulseDetail gets a reference to the given map[string]interface{} and assigns it to the PulseDetail field.
-func (o *PulseUrlScanData) SetPulseDetail(v map[string]interface{}) {
-	o.PulseDetail = v
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
+// and a boolean to check if the value has been set.
+func (o *ChannelScheduleData) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.UpdatedAt, true
 }
 
-func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
+// SetUpdatedAt sets field value
+func (o *ChannelScheduleData) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = v
+}
+
+func (o ChannelScheduleData) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -138,23 +157,24 @@ func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o PulseUrlScanData) ToMap() (map[string]interface{}, error) {
+func (o ChannelScheduleData) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["crawlsnap_hash_id"] = o.CrawlsnapHashId
-	toSerialize["search_type"] = o.SearchType
-	if !IsNil(o.PulseDetail) {
-		toSerialize["pulse_detail"] = o.PulseDetail
-	}
+	toSerialize["slug"] = o.Slug
+	toSerialize["name"] = o.Name
+	toSerialize["entries"] = o.Entries
+	toSerialize["updated_at"] = o.UpdatedAt
 	return toSerialize, nil
 }
 
-func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
+func (o *ChannelScheduleData) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"crawlsnap_hash_id",
-		"search_type",
+		"slug",
+		"name",
+		"entries",
+		"updated_at",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -171,53 +191,53 @@ func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varPulseUrlScanData := _PulseUrlScanData{}
+	varChannelScheduleData := _ChannelScheduleData{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPulseUrlScanData)
+	err = decoder.Decode(&varChannelScheduleData)
 
 	if err != nil {
 		return err
 	}
 
-	*o = PulseUrlScanData(varPulseUrlScanData)
+	*o = ChannelScheduleData(varChannelScheduleData)
 
 	return err
 }
 
-type NullablePulseUrlScanData struct {
-	value *PulseUrlScanData
+type NullableChannelScheduleData struct {
+	value *ChannelScheduleData
 	isSet bool
 }
 
-func (v NullablePulseUrlScanData) Get() *PulseUrlScanData {
+func (v NullableChannelScheduleData) Get() *ChannelScheduleData {
 	return v.value
 }
 
-func (v *NullablePulseUrlScanData) Set(val *PulseUrlScanData) {
+func (v *NullableChannelScheduleData) Set(val *ChannelScheduleData) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePulseUrlScanData) IsSet() bool {
+func (v NullableChannelScheduleData) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePulseUrlScanData) Unset() {
+func (v *NullableChannelScheduleData) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePulseUrlScanData(val *PulseUrlScanData) *NullablePulseUrlScanData {
-	return &NullablePulseUrlScanData{value: val, isSet: true}
+func NewNullableChannelScheduleData(val *ChannelScheduleData) *NullableChannelScheduleData {
+	return &NullableChannelScheduleData{value: val, isSet: true}
 }
 
-func (v NullablePulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (v NullableChannelScheduleData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePulseUrlScanData) UnmarshalJSON(src []byte) error {
+func (v *NullableChannelScheduleData) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

@@ -17,120 +17,140 @@ import (
 	"fmt"
 )
 
-// checks if the PulseUrlScanData type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &PulseUrlScanData{}
+// checks if the MatchStat type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &MatchStat{}
 
-// PulseUrlScanData struct for PulseUrlScanData
-type PulseUrlScanData struct {
-	// SHA-256 of the queried URL.
-	CrawlsnapHashId string `json:"crawlsnap_hash_id"`
-	SearchType      string `json:"search_type"`
-	// Threat-intelligence pulse summary. Inner shape evolves upstream and is intentionally free-form.
-	PulseDetail map[string]interface{} `json:"pulse_detail,omitempty"`
+// MatchStat struct for MatchStat
+type MatchStat struct {
+	// Statistics section header, e.g. \"Summary\", \"Shots\", \"Passes\".
+	Section string `json:"section"`
+	// Stat row label, e.g. \"On goal\", \"Possession\".
+	Label string `json:"label"`
+	// Home value as rendered (may be a percentage like \"52%\").
+	Home string `json:"home"`
+	Away string `json:"away"`
 }
 
-type _PulseUrlScanData PulseUrlScanData
+type _MatchStat MatchStat
 
-// NewPulseUrlScanData instantiates a new PulseUrlScanData object
+// NewMatchStat instantiates a new MatchStat object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPulseUrlScanData(crawlsnapHashId string, searchType string) *PulseUrlScanData {
-	this := PulseUrlScanData{}
-	this.CrawlsnapHashId = crawlsnapHashId
-	this.SearchType = searchType
+func NewMatchStat(section string, label string, home string, away string) *MatchStat {
+	this := MatchStat{}
+	this.Section = section
+	this.Label = label
+	this.Home = home
+	this.Away = away
 	return &this
 }
 
-// NewPulseUrlScanDataWithDefaults instantiates a new PulseUrlScanData object
+// NewMatchStatWithDefaults instantiates a new MatchStat object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPulseUrlScanDataWithDefaults() *PulseUrlScanData {
-	this := PulseUrlScanData{}
+func NewMatchStatWithDefaults() *MatchStat {
+	this := MatchStat{}
 	return &this
 }
 
-// GetCrawlsnapHashId returns the CrawlsnapHashId field value
-func (o *PulseUrlScanData) GetCrawlsnapHashId() string {
+// GetSection returns the Section field value
+func (o *MatchStat) GetSection() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.CrawlsnapHashId
+	return o.Section
 }
 
-// GetCrawlsnapHashIdOk returns a tuple with the CrawlsnapHashId field value
+// GetSectionOk returns a tuple with the Section field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetCrawlsnapHashIdOk() (*string, bool) {
+func (o *MatchStat) GetSectionOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.CrawlsnapHashId, true
+	return &o.Section, true
 }
 
-// SetCrawlsnapHashId sets field value
-func (o *PulseUrlScanData) SetCrawlsnapHashId(v string) {
-	o.CrawlsnapHashId = v
+// SetSection sets field value
+func (o *MatchStat) SetSection(v string) {
+	o.Section = v
 }
 
-// GetSearchType returns the SearchType field value
-func (o *PulseUrlScanData) GetSearchType() string {
+// GetLabel returns the Label field value
+func (o *MatchStat) GetLabel() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.SearchType
+	return o.Label
 }
 
-// GetSearchTypeOk returns a tuple with the SearchType field value
+// GetLabelOk returns a tuple with the Label field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetSearchTypeOk() (*string, bool) {
+func (o *MatchStat) GetLabelOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.SearchType, true
+	return &o.Label, true
 }
 
-// SetSearchType sets field value
-func (o *PulseUrlScanData) SetSearchType(v string) {
-	o.SearchType = v
+// SetLabel sets field value
+func (o *MatchStat) SetLabel(v string) {
+	o.Label = v
 }
 
-// GetPulseDetail returns the PulseDetail field value if set, zero value otherwise.
-func (o *PulseUrlScanData) GetPulseDetail() map[string]interface{} {
-	if o == nil || IsNil(o.PulseDetail) {
-		var ret map[string]interface{}
+// GetHome returns the Home field value
+func (o *MatchStat) GetHome() string {
+	if o == nil {
+		var ret string
 		return ret
 	}
-	return o.PulseDetail
+
+	return o.Home
 }
 
-// GetPulseDetailOk returns a tuple with the PulseDetail field value if set, nil otherwise
+// GetHomeOk returns a tuple with the Home field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetPulseDetailOk() (map[string]interface{}, bool) {
-	if o == nil || IsNil(o.PulseDetail) {
-		return map[string]interface{}{}, false
+func (o *MatchStat) GetHomeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
 	}
-	return o.PulseDetail, true
+	return &o.Home, true
 }
 
-// HasPulseDetail returns a boolean if a field has been set.
-func (o *PulseUrlScanData) HasPulseDetail() bool {
-	if o != nil && !IsNil(o.PulseDetail) {
-		return true
+// SetHome sets field value
+func (o *MatchStat) SetHome(v string) {
+	o.Home = v
+}
+
+// GetAway returns the Away field value
+func (o *MatchStat) GetAway() string {
+	if o == nil {
+		var ret string
+		return ret
 	}
 
-	return false
+	return o.Away
 }
 
-// SetPulseDetail gets a reference to the given map[string]interface{} and assigns it to the PulseDetail field.
-func (o *PulseUrlScanData) SetPulseDetail(v map[string]interface{}) {
-	o.PulseDetail = v
+// GetAwayOk returns a tuple with the Away field value
+// and a boolean to check if the value has been set.
+func (o *MatchStat) GetAwayOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Away, true
 }
 
-func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
+// SetAway sets field value
+func (o *MatchStat) SetAway(v string) {
+	o.Away = v
+}
+
+func (o MatchStat) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -138,23 +158,24 @@ func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o PulseUrlScanData) ToMap() (map[string]interface{}, error) {
+func (o MatchStat) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["crawlsnap_hash_id"] = o.CrawlsnapHashId
-	toSerialize["search_type"] = o.SearchType
-	if !IsNil(o.PulseDetail) {
-		toSerialize["pulse_detail"] = o.PulseDetail
-	}
+	toSerialize["section"] = o.Section
+	toSerialize["label"] = o.Label
+	toSerialize["home"] = o.Home
+	toSerialize["away"] = o.Away
 	return toSerialize, nil
 }
 
-func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
+func (o *MatchStat) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"crawlsnap_hash_id",
-		"search_type",
+		"section",
+		"label",
+		"home",
+		"away",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -171,53 +192,53 @@ func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varPulseUrlScanData := _PulseUrlScanData{}
+	varMatchStat := _MatchStat{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPulseUrlScanData)
+	err = decoder.Decode(&varMatchStat)
 
 	if err != nil {
 		return err
 	}
 
-	*o = PulseUrlScanData(varPulseUrlScanData)
+	*o = MatchStat(varMatchStat)
 
 	return err
 }
 
-type NullablePulseUrlScanData struct {
-	value *PulseUrlScanData
+type NullableMatchStat struct {
+	value *MatchStat
 	isSet bool
 }
 
-func (v NullablePulseUrlScanData) Get() *PulseUrlScanData {
+func (v NullableMatchStat) Get() *MatchStat {
 	return v.value
 }
 
-func (v *NullablePulseUrlScanData) Set(val *PulseUrlScanData) {
+func (v *NullableMatchStat) Set(val *MatchStat) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePulseUrlScanData) IsSet() bool {
+func (v NullableMatchStat) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePulseUrlScanData) Unset() {
+func (v *NullableMatchStat) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePulseUrlScanData(val *PulseUrlScanData) *NullablePulseUrlScanData {
-	return &NullablePulseUrlScanData{value: val, isSet: true}
+func NewNullableMatchStat(val *MatchStat) *NullableMatchStat {
+	return &NullableMatchStat{value: val, isSet: true}
 }
 
-func (v NullablePulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (v NullableMatchStat) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePulseUrlScanData) UnmarshalJSON(src []byte) error {
+func (v *NullableMatchStat) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

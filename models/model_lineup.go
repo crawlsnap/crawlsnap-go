@@ -17,120 +17,129 @@ import (
 	"fmt"
 )
 
-// checks if the PulseUrlScanData type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &PulseUrlScanData{}
+// checks if the Lineup type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &Lineup{}
 
-// PulseUrlScanData struct for PulseUrlScanData
-type PulseUrlScanData struct {
-	// SHA-256 of the queried URL.
-	CrawlsnapHashId string `json:"crawlsnap_hash_id"`
-	SearchType      string `json:"search_type"`
-	// Threat-intelligence pulse summary. Inner shape evolves upstream and is intentionally free-form.
-	PulseDetail map[string]interface{} `json:"pulse_detail,omitempty"`
+// Lineup struct for Lineup
+type Lineup struct {
+	Starting    []string       `json:"starting"`
+	Substitutes []string       `json:"substitutes"`
+	Coach       NullableString `json:"coach,omitempty"`
 }
 
-type _PulseUrlScanData PulseUrlScanData
+type _Lineup Lineup
 
-// NewPulseUrlScanData instantiates a new PulseUrlScanData object
+// NewLineup instantiates a new Lineup object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPulseUrlScanData(crawlsnapHashId string, searchType string) *PulseUrlScanData {
-	this := PulseUrlScanData{}
-	this.CrawlsnapHashId = crawlsnapHashId
-	this.SearchType = searchType
+func NewLineup(starting []string, substitutes []string) *Lineup {
+	this := Lineup{}
+	this.Starting = starting
+	this.Substitutes = substitutes
 	return &this
 }
 
-// NewPulseUrlScanDataWithDefaults instantiates a new PulseUrlScanData object
+// NewLineupWithDefaults instantiates a new Lineup object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewPulseUrlScanDataWithDefaults() *PulseUrlScanData {
-	this := PulseUrlScanData{}
+func NewLineupWithDefaults() *Lineup {
+	this := Lineup{}
 	return &this
 }
 
-// GetCrawlsnapHashId returns the CrawlsnapHashId field value
-func (o *PulseUrlScanData) GetCrawlsnapHashId() string {
+// GetStarting returns the Starting field value
+func (o *Lineup) GetStarting() []string {
 	if o == nil {
-		var ret string
+		var ret []string
 		return ret
 	}
 
-	return o.CrawlsnapHashId
+	return o.Starting
 }
 
-// GetCrawlsnapHashIdOk returns a tuple with the CrawlsnapHashId field value
+// GetStartingOk returns a tuple with the Starting field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetCrawlsnapHashIdOk() (*string, bool) {
+func (o *Lineup) GetStartingOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.CrawlsnapHashId, true
+	return o.Starting, true
 }
 
-// SetCrawlsnapHashId sets field value
-func (o *PulseUrlScanData) SetCrawlsnapHashId(v string) {
-	o.CrawlsnapHashId = v
+// SetStarting sets field value
+func (o *Lineup) SetStarting(v []string) {
+	o.Starting = v
 }
 
-// GetSearchType returns the SearchType field value
-func (o *PulseUrlScanData) GetSearchType() string {
+// GetSubstitutes returns the Substitutes field value
+func (o *Lineup) GetSubstitutes() []string {
 	if o == nil {
-		var ret string
+		var ret []string
 		return ret
 	}
 
-	return o.SearchType
+	return o.Substitutes
 }
 
-// GetSearchTypeOk returns a tuple with the SearchType field value
+// GetSubstitutesOk returns a tuple with the Substitutes field value
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetSearchTypeOk() (*string, bool) {
+func (o *Lineup) GetSubstitutesOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.SearchType, true
+	return o.Substitutes, true
 }
 
-// SetSearchType sets field value
-func (o *PulseUrlScanData) SetSearchType(v string) {
-	o.SearchType = v
+// SetSubstitutes sets field value
+func (o *Lineup) SetSubstitutes(v []string) {
+	o.Substitutes = v
 }
 
-// GetPulseDetail returns the PulseDetail field value if set, zero value otherwise.
-func (o *PulseUrlScanData) GetPulseDetail() map[string]interface{} {
-	if o == nil || IsNil(o.PulseDetail) {
-		var ret map[string]interface{}
+// GetCoach returns the Coach field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Lineup) GetCoach() string {
+	if o == nil || IsNil(o.Coach.Get()) {
+		var ret string
 		return ret
 	}
-	return o.PulseDetail
+	return *o.Coach.Get()
 }
 
-// GetPulseDetailOk returns a tuple with the PulseDetail field value if set, nil otherwise
+// GetCoachOk returns a tuple with the Coach field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PulseUrlScanData) GetPulseDetailOk() (map[string]interface{}, bool) {
-	if o == nil || IsNil(o.PulseDetail) {
-		return map[string]interface{}{}, false
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Lineup) GetCoachOk() (*string, bool) {
+	if o == nil {
+		return nil, false
 	}
-	return o.PulseDetail, true
+	return o.Coach.Get(), o.Coach.IsSet()
 }
 
-// HasPulseDetail returns a boolean if a field has been set.
-func (o *PulseUrlScanData) HasPulseDetail() bool {
-	if o != nil && !IsNil(o.PulseDetail) {
+// HasCoach returns a boolean if a field has been set.
+func (o *Lineup) HasCoach() bool {
+	if o != nil && o.Coach.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetPulseDetail gets a reference to the given map[string]interface{} and assigns it to the PulseDetail field.
-func (o *PulseUrlScanData) SetPulseDetail(v map[string]interface{}) {
-	o.PulseDetail = v
+// SetCoach gets a reference to the given NullableString and assigns it to the Coach field.
+func (o *Lineup) SetCoach(v string) {
+	o.Coach.Set(&v)
 }
 
-func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
+// SetCoachNil sets the value for Coach to be an explicit nil
+func (o *Lineup) SetCoachNil() {
+	o.Coach.Set(nil)
+}
+
+// UnsetCoach ensures that no value is present for Coach, not even an explicit nil
+func (o *Lineup) UnsetCoach() {
+	o.Coach.Unset()
+}
+
+func (o Lineup) MarshalJSON() ([]byte, error) {
 	toSerialize, err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -138,23 +147,23 @@ func (o PulseUrlScanData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o PulseUrlScanData) ToMap() (map[string]interface{}, error) {
+func (o Lineup) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["crawlsnap_hash_id"] = o.CrawlsnapHashId
-	toSerialize["search_type"] = o.SearchType
-	if !IsNil(o.PulseDetail) {
-		toSerialize["pulse_detail"] = o.PulseDetail
+	toSerialize["starting"] = o.Starting
+	toSerialize["substitutes"] = o.Substitutes
+	if o.Coach.IsSet() {
+		toSerialize["coach"] = o.Coach.Get()
 	}
 	return toSerialize, nil
 }
 
-func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
+func (o *Lineup) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"crawlsnap_hash_id",
-		"search_type",
+		"starting",
+		"substitutes",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -171,53 +180,53 @@ func (o *PulseUrlScanData) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varPulseUrlScanData := _PulseUrlScanData{}
+	varLineup := _Lineup{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPulseUrlScanData)
+	err = decoder.Decode(&varLineup)
 
 	if err != nil {
 		return err
 	}
 
-	*o = PulseUrlScanData(varPulseUrlScanData)
+	*o = Lineup(varLineup)
 
 	return err
 }
 
-type NullablePulseUrlScanData struct {
-	value *PulseUrlScanData
+type NullableLineup struct {
+	value *Lineup
 	isSet bool
 }
 
-func (v NullablePulseUrlScanData) Get() *PulseUrlScanData {
+func (v NullableLineup) Get() *Lineup {
 	return v.value
 }
 
-func (v *NullablePulseUrlScanData) Set(val *PulseUrlScanData) {
+func (v *NullableLineup) Set(val *Lineup) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullablePulseUrlScanData) IsSet() bool {
+func (v NullableLineup) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullablePulseUrlScanData) Unset() {
+func (v *NullableLineup) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullablePulseUrlScanData(val *PulseUrlScanData) *NullablePulseUrlScanData {
-	return &NullablePulseUrlScanData{value: val, isSet: true}
+func NewNullableLineup(val *Lineup) *NullableLineup {
+	return &NullableLineup{value: val, isSet: true}
 }
 
-func (v NullablePulseUrlScanData) MarshalJSON() ([]byte, error) {
+func (v NullableLineup) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullablePulseUrlScanData) UnmarshalJSON(src []byte) error {
+func (v *NullableLineup) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

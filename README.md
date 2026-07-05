@@ -65,6 +65,17 @@ otherwise — you never inspect the response envelope yourself.
 | `client.PulseSnap.URL / Hash / IP / Domain(ctx, q)` | threat-intelligence pulse enrichment |
 | `client.SubdoSnap.Scan(ctx, q)` | one page of subdomains |
 | `client.SubdoSnap.ScanIter(ctx, q)` | every subdomain across all pages |
+| `client.SportSnap.Channel(ctx, slug)` | TV channel metadata + broadcast rights |
+| `client.SportSnap.ChannelSchedule(ctx, slug)` | channel broadcast schedule |
+| `client.SportSnap.Match(ctx, id)` | match details, per-country coverage, result data |
+| `client.SportSnap.CountryChannels(ctx, country)` | TV channels known for a country |
+| `client.SportSnap.DailySchedule(ctx, "2026-07-05")` | daily schedule grouped by competition |
+| `client.SportSnap.DailyScheduleTime(ctx, t)` | same, from a `time.Time` |
+
+`SportSnap` covers live football (soccer) TV listings. `Match` status is
+`scheduled`, `live`, or `finished` and discriminates how much of the payload
+is populated (score, events, statistics, lineups). Match ids and channel
+slugs are discovered via `DailySchedule` and `ChannelSchedule` entries.
 
 ## Errors
 
