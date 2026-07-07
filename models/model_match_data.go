@@ -29,12 +29,16 @@ type MatchData struct {
 	Round       NullableString `json:"round,omitempty"`
 	HomeTeam    TeamRef        `json:"home_team"`
 	AwayTeam    TeamRef        `json:"away_team"`
+	// True when at least one side is an undecided knockout-bracket slot (the source renders placeholders like \"W93\" or \"L101\" until the pairing is known).
+	IsPlaceholder bool `json:"is_placeholder"`
 	// Kickoff normalized to UTC; null if the time could not be parsed.
 	KickoffUtc NullableTime `json:"kickoff_utc,omitempty"`
-	// Raw kickoff string as rendered by the source (debug/diagnostic aid).
+	// Kickoff date+time in the source's rendering zone, cleaned of live/status markers (e.g. \"Jul 5, 2026 16:00\"); null if the time could not be parsed.
 	KickoffLocal NullableString `json:"kickoff_local,omitempty"`
-	Venue        NullableString `json:"venue,omitempty"`
-	Score        NullableScore  `json:"score,omitempty"`
+	// Raw kickoff header exactly as rendered by the source — debug/diagnostic aid.
+	KickoffRaw NullableString `json:"kickoff_raw,omitempty"`
+	Venue      NullableString `json:"venue,omitempty"`
+	Score      NullableScore  `json:"score,omitempty"`
 	// Empty for scheduled matches.
 	Events []MatchEvent `json:"events,omitempty"`
 	// Empty for scheduled matches.
@@ -53,13 +57,14 @@ type _MatchData MatchData
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMatchData(id int64, status MatchStatus, competition CompetitionRef, homeTeam TeamRef, awayTeam TeamRef, broadcasts []CountryBroadcast, updatedAt time.Time) *MatchData {
+func NewMatchData(id int64, status MatchStatus, competition CompetitionRef, homeTeam TeamRef, awayTeam TeamRef, isPlaceholder bool, broadcasts []CountryBroadcast, updatedAt time.Time) *MatchData {
 	this := MatchData{}
 	this.Id = id
 	this.Status = status
 	this.Competition = competition
 	this.HomeTeam = homeTeam
 	this.AwayTeam = awayTeam
+	this.IsPlaceholder = isPlaceholder
 	this.Broadcasts = broadcasts
 	this.UpdatedAt = updatedAt
 	return &this
@@ -236,6 +241,30 @@ func (o *MatchData) SetAwayTeam(v TeamRef) {
 	o.AwayTeam = v
 }
 
+// GetIsPlaceholder returns the IsPlaceholder field value
+func (o *MatchData) GetIsPlaceholder() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsPlaceholder
+}
+
+// GetIsPlaceholderOk returns a tuple with the IsPlaceholder field value
+// and a boolean to check if the value has been set.
+func (o *MatchData) GetIsPlaceholderOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsPlaceholder, true
+}
+
+// SetIsPlaceholder sets field value
+func (o *MatchData) SetIsPlaceholder(v bool) {
+	o.IsPlaceholder = v
+}
+
 // GetKickoffUtc returns the KickoffUtc field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *MatchData) GetKickoffUtc() time.Time {
 	if o == nil || IsNil(o.KickoffUtc.Get()) {
@@ -320,6 +349,49 @@ func (o *MatchData) SetKickoffLocalNil() {
 // UnsetKickoffLocal ensures that no value is present for KickoffLocal, not even an explicit nil
 func (o *MatchData) UnsetKickoffLocal() {
 	o.KickoffLocal.Unset()
+}
+
+// GetKickoffRaw returns the KickoffRaw field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MatchData) GetKickoffRaw() string {
+	if o == nil || IsNil(o.KickoffRaw.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.KickoffRaw.Get()
+}
+
+// GetKickoffRawOk returns a tuple with the KickoffRaw field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MatchData) GetKickoffRawOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.KickoffRaw.Get(), o.KickoffRaw.IsSet()
+}
+
+// HasKickoffRaw returns a boolean if a field has been set.
+func (o *MatchData) HasKickoffRaw() bool {
+	if o != nil && o.KickoffRaw.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetKickoffRaw gets a reference to the given NullableString and assigns it to the KickoffRaw field.
+func (o *MatchData) SetKickoffRaw(v string) {
+	o.KickoffRaw.Set(&v)
+}
+
+// SetKickoffRawNil sets the value for KickoffRaw to be an explicit nil
+func (o *MatchData) SetKickoffRawNil() {
+	o.KickoffRaw.Set(nil)
+}
+
+// UnsetKickoffRaw ensures that no value is present for KickoffRaw, not even an explicit nil
+func (o *MatchData) UnsetKickoffRaw() {
+	o.KickoffRaw.Unset()
 }
 
 // GetVenue returns the Venue field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -624,11 +696,15 @@ func (o MatchData) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["home_team"] = o.HomeTeam
 	toSerialize["away_team"] = o.AwayTeam
+	toSerialize["is_placeholder"] = o.IsPlaceholder
 	if o.KickoffUtc.IsSet() {
 		toSerialize["kickoff_utc"] = o.KickoffUtc.Get()
 	}
 	if o.KickoffLocal.IsSet() {
 		toSerialize["kickoff_local"] = o.KickoffLocal.Get()
+	}
+	if o.KickoffRaw.IsSet() {
+		toSerialize["kickoff_raw"] = o.KickoffRaw.Get()
 	}
 	if o.Venue.IsSet() {
 		toSerialize["venue"] = o.Venue.Get()
@@ -663,6 +739,7 @@ func (o *MatchData) UnmarshalJSON(data []byte) (err error) {
 		"competition",
 		"home_team",
 		"away_team",
+		"is_placeholder",
 		"broadcasts",
 		"updated_at",
 	}

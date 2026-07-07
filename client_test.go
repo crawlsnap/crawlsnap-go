@@ -81,15 +81,15 @@ func (m *mockHandler) handle(r *http.Request) (*http.Response, error) {
 	case "/v1/sport-snap/channels/bein-connect-turkey":
 		return ok(`{"slug":"bein-connect-turkey","name":"beIN CONNECT Turkey","country":"Turkey","broadcast_rights":[{"competition":"England - Premier League","year_start":2024,"year_end":2027}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
 	case "/v1/sport-snap/channels/bein-connect-turkey/schedule":
-		return ok(`{"slug":"bein-connect-turkey","name":"beIN CONNECT Turkey","entries":[{"date":"2026-07-06","kickoff_utc":"2026-07-06T19:00:00Z","match_id":5542814,"match_title":"Brazil vs Norway","competition":"Friendly"}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
+		return ok(`{"slug":"bein-connect-turkey","name":"beIN CONNECT Turkey","entries":[{"date":"2026-07-06","kickoff_utc":"2026-07-06T19:00:00Z","match_id":5542814,"match_title":"Brazil vs Norway","competition":"Friendly","is_placeholder":false,"kickoff_local":"10:00pm","kickoff_raw":"10:00pm"}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
 	case "/v1/sport-snap/matches/5542814":
-		return ok(`{"id":5542814,"status":"finished","competition":{"name":"Friendly"},"home_team":{"name":"Brazil"},"away_team":{"name":"Norway"},"score":{"home":2,"away":1},"events":[],"stats":[],"broadcasts":[{"country":"Turkey","country_slug":"turkey","channels":[{"name":"beIN CONNECT Turkey","slug":"bein-connect-turkey"}]}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
+		return ok(`{"id":5542814,"status":"finished","is_placeholder":false,"competition":{"name":"Friendly"},"home_team":{"name":"Brazil"},"away_team":{"name":"Norway"},"score":{"home":2,"away":1},"events":[],"stats":[],"broadcasts":[{"country":"Turkey","country_slug":"turkey","channels":[{"name":"beIN CONNECT Turkey","slug":"bein-connect-turkey"}]}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
 	case "/v1/sport-snap/matches/404":
 		return errResp(404, "Unknown match id"), nil
 	case "/v1/sport-snap/countries/turkey/channels":
 		return ok(`{"country":"Turkey","country_slug":"turkey","channels":[{"name":"beIN CONNECT Turkey","slug":"bein-connect-turkey","last_seen":"2026-07-05T10:00:00Z"}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
 	case "/v1/sport-snap/schedules/2026-07-05":
-		return ok(`{"date":"2026-07-05","competitions":[{"competition":"Friendly","matches":[{"id":5542814,"title":"Brazil vs Norway","status":"scheduled","kickoff_utc":"2026-07-06T19:00:00Z","channels":[{"name":"beIN CONNECT Turkey","slug":"bein-connect-turkey"}]}]}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
+		return ok(`{"date":"2026-07-05","competitions":[{"competition":"Friendly","matches":[{"id":5542814,"title":"Brazil vs Norway","status":"scheduled","is_placeholder":false,"kickoff_utc":"2026-07-06T19:00:00Z","channels":[{"name":"beIN CONNECT Turkey","slug":"bein-connect-turkey"}]}]}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
 	}
 	return jsonResp(500, `{"data":null,"is_success":false,"message":"unexpected","response_code":500}`, nil), nil
 }

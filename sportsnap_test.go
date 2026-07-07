@@ -41,6 +41,12 @@ func TestSportSnapChannelSchedule(t *testing.T) {
 	if entries[0].GetMatchTitle() != "Brazil vs Norway" {
 		t.Errorf("match_title = %q, want Brazil vs Norway", entries[0].GetMatchTitle())
 	}
+	if entries[0].GetIsPlaceholder() {
+		t.Error("is_placeholder = true, want false")
+	}
+	if entries[0].GetKickoffLocal() != "10:00pm" || entries[0].GetKickoffRaw() != "10:00pm" {
+		t.Errorf("kickoff_local/kickoff_raw = %q/%q, want 10:00pm/10:00pm", entries[0].GetKickoffLocal(), entries[0].GetKickoffRaw())
+	}
 }
 
 func TestSportSnapMatch(t *testing.T) {

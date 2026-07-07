@@ -27,14 +27,18 @@ type ChannelScheduleEntry struct {
 	Date string `json:"date"`
 	// Kickoff normalized to UTC; null if the time could not be parsed.
 	KickoffUtc NullableTime `json:"kickoff_utc,omitempty"`
-	// Raw kickoff string as rendered by the source (debug/diagnostic aid).
+	// Kickoff clock in the source's rendering zone, cleaned of live/status markers (e.g. \"4:00pm\", \"20:45\"); null if the time could not be parsed.
 	KickoffLocal NullableString `json:"kickoff_local,omitempty"`
+	// Raw time cell exactly as rendered by the source, including any live badge and status suffix (e.g. \"Live+  4:00pm86'\") — debug/diagnostic aid.
+	KickoffRaw NullableString `json:"kickoff_raw,omitempty"`
 	// Numeric match id usable with `/api/v1/matches/{id}`; null when the source link carried no id.
 	MatchId NullableInt64 `json:"match_id,omitempty"`
 	// E.g. \"Brazil vs Norway\".
 	MatchTitle string         `json:"match_title"`
 	HomeTeam   NullableString `json:"home_team,omitempty"`
 	AwayTeam   NullableString `json:"away_team,omitempty"`
+	// True when at least one side is an undecided knockout-bracket slot (the source renders placeholders like \"W93\" or \"L101\" until the pairing is known).
+	IsPlaceholder bool `json:"is_placeholder"`
 	// Stage/round annotation, e.g. \"Round of 16\".
 	Round       NullableString `json:"round,omitempty"`
 	Competition string         `json:"competition"`
@@ -46,10 +50,11 @@ type _ChannelScheduleEntry ChannelScheduleEntry
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewChannelScheduleEntry(date string, matchTitle string, competition string) *ChannelScheduleEntry {
+func NewChannelScheduleEntry(date string, matchTitle string, isPlaceholder bool, competition string) *ChannelScheduleEntry {
 	this := ChannelScheduleEntry{}
 	this.Date = date
 	this.MatchTitle = matchTitle
+	this.IsPlaceholder = isPlaceholder
 	this.Competition = competition
 	return &this
 }
@@ -170,6 +175,49 @@ func (o *ChannelScheduleEntry) SetKickoffLocalNil() {
 // UnsetKickoffLocal ensures that no value is present for KickoffLocal, not even an explicit nil
 func (o *ChannelScheduleEntry) UnsetKickoffLocal() {
 	o.KickoffLocal.Unset()
+}
+
+// GetKickoffRaw returns the KickoffRaw field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ChannelScheduleEntry) GetKickoffRaw() string {
+	if o == nil || IsNil(o.KickoffRaw.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.KickoffRaw.Get()
+}
+
+// GetKickoffRawOk returns a tuple with the KickoffRaw field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ChannelScheduleEntry) GetKickoffRawOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.KickoffRaw.Get(), o.KickoffRaw.IsSet()
+}
+
+// HasKickoffRaw returns a boolean if a field has been set.
+func (o *ChannelScheduleEntry) HasKickoffRaw() bool {
+	if o != nil && o.KickoffRaw.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetKickoffRaw gets a reference to the given NullableString and assigns it to the KickoffRaw field.
+func (o *ChannelScheduleEntry) SetKickoffRaw(v string) {
+	o.KickoffRaw.Set(&v)
+}
+
+// SetKickoffRawNil sets the value for KickoffRaw to be an explicit nil
+func (o *ChannelScheduleEntry) SetKickoffRawNil() {
+	o.KickoffRaw.Set(nil)
+}
+
+// UnsetKickoffRaw ensures that no value is present for KickoffRaw, not even an explicit nil
+func (o *ChannelScheduleEntry) UnsetKickoffRaw() {
+	o.KickoffRaw.Unset()
 }
 
 // GetMatchId returns the MatchId field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -325,6 +373,30 @@ func (o *ChannelScheduleEntry) UnsetAwayTeam() {
 	o.AwayTeam.Unset()
 }
 
+// GetIsPlaceholder returns the IsPlaceholder field value
+func (o *ChannelScheduleEntry) GetIsPlaceholder() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsPlaceholder
+}
+
+// GetIsPlaceholderOk returns a tuple with the IsPlaceholder field value
+// and a boolean to check if the value has been set.
+func (o *ChannelScheduleEntry) GetIsPlaceholderOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsPlaceholder, true
+}
+
+// SetIsPlaceholder sets field value
+func (o *ChannelScheduleEntry) SetIsPlaceholder(v bool) {
+	o.IsPlaceholder = v
+}
+
 // GetRound returns the Round field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *ChannelScheduleEntry) GetRound() string {
 	if o == nil || IsNil(o.Round.Get()) {
@@ -409,6 +481,9 @@ func (o ChannelScheduleEntry) ToMap() (map[string]interface{}, error) {
 	if o.KickoffLocal.IsSet() {
 		toSerialize["kickoff_local"] = o.KickoffLocal.Get()
 	}
+	if o.KickoffRaw.IsSet() {
+		toSerialize["kickoff_raw"] = o.KickoffRaw.Get()
+	}
 	if o.MatchId.IsSet() {
 		toSerialize["match_id"] = o.MatchId.Get()
 	}
@@ -419,6 +494,7 @@ func (o ChannelScheduleEntry) ToMap() (map[string]interface{}, error) {
 	if o.AwayTeam.IsSet() {
 		toSerialize["away_team"] = o.AwayTeam.Get()
 	}
+	toSerialize["is_placeholder"] = o.IsPlaceholder
 	if o.Round.IsSet() {
 		toSerialize["round"] = o.Round.Get()
 	}
@@ -433,6 +509,7 @@ func (o *ChannelScheduleEntry) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"date",
 		"match_title",
+		"is_placeholder",
 		"competition",
 	}
 
