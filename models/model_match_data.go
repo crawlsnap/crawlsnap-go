@@ -1,7 +1,7 @@
 /*
 CrawlSnap API
 
-CrawlSnap is a data intelligence platform. It delivers structured, on-demand data through fast, typed HTTP APIs you can call from any language. This reference covers authentication, the response envelope, error handling, and the available CrawlSnap data products:    - **VectorSnap** — reputation, detections, categories, and relationships     for url / hash / ip / domain.   - **PulseSnap** — threat-intelligence pulse (and sandbox) enrichment for     url / hash / ip / domain.   - **SubdoSnap** — paginated subdomain enumeration for a domain.   - **SportSnap** — live football (soccer) TV listings: channel metadata     and broadcast schedules, match details with per-country coverage     (score, events, statistics, and lineups for finished matches),     country channel directories, and daily schedules.  ## Authentication  Authenticate every request with your CrawlSnap API key, sent as a Bearer token in the `Authorization` header:      Authorization: Bearer sk-cs-...  Create and rotate keys from your dashboard. Treat the key like a password: it carries your full quota and must stay secret. Never embed it in client-side code or commit it to source control.  ## Response envelope  Every response — success or error — uses the same envelope:  ```json {   \"data\": { ... },          // payload on success, null on failure   \"is_success\": true,        // authoritative success flag   \"message\": \"Success\",     // human-readable summary   \"response_code\": 200       // mirrors the HTTP status code } ```  Always check `is_success` before reading `data`.  ## Status codes  HTTP status codes follow standard REST semantics; the body `response_code` mirrors the HTTP status.    - **200** — success, `data` populated.   - **400** — invalid input (malformed query or path parameter).   - **401** — missing or invalid API key.   - **402** — out of credits, or monthly quota exceeded.   - **403** — subscription is not active.   - **404** — no data found for the supplied identifier.   - **429** — daily request limit exceeded.   - **5xx** — server error, or the upstream enrichment service was     unavailable / timed out.
+CrawlSnap is a data intelligence platform. It delivers structured, on-demand data through fast, typed HTTP APIs you can call from any language. This reference covers authentication, the response envelope, error handling, and the available CrawlSnap data products:    - **VectorSnap** — reputation, detections, categories, and relationships     for url / hash / ip / domain.   - **PulseSnap** — threat-intelligence pulse (and sandbox) enrichment for     url / hash / ip / domain.   - **SubdoSnap** — paginated subdomain enumeration for a domain.   - **SportSnap** — live football (soccer) data: live scores with     in-match events, fixtures with per-region broadcast channels, match     details (lineups, events, statistics, per-country coverage),     competitions (fixtures, standings, top scorers, TV rights), teams,     TV channel directories, football news, search, and player profiles.  ## Authentication  Authenticate every request with your CrawlSnap API key, sent as a Bearer token in the `Authorization` header:      Authorization: Bearer sk-cs-...  Create and rotate keys from your dashboard. Treat the key like a password: it carries your full quota and must stay secret. Never embed it in client-side code or commit it to source control.  ## Response envelope  Every response — success or error — uses the same envelope:  ```json {   \"data\": { ... },          // payload on success, null on failure   \"is_success\": true,        // authoritative success flag   \"message\": \"Success\",     // human-readable summary   \"response_code\": 200       // mirrors the HTTP status code } ```  Always check `is_success` before reading `data`.  ## Status codes  HTTP status codes follow standard REST semantics; the body `response_code` mirrors the HTTP status.    - **200** — success, `data` populated.   - **400** — invalid input (malformed query or path parameter).   - **401** — missing or invalid API key.   - **402** — out of credits, or monthly quota exceeded.   - **403** — subscription is not active.   - **404** — no data found for the supplied identifier.   - **429** — daily request limit exceeded.   - **5xx** — server error, or the upstream enrichment service was     unavailable / timed out.
 
 API version: 1.0.0
 Contact: support@crawlsnap.com
@@ -15,7 +15,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"time"
 )
 
 // checks if the MatchData type satisfies the MappedNullable interface at compile time
@@ -23,32 +22,8 @@ var _ MappedNullable = &MatchData{}
 
 // MatchData struct for MatchData
 type MatchData struct {
-	Id          int64          `json:"id"`
-	Status      MatchStatus    `json:"status"`
-	Competition CompetitionRef `json:"competition"`
-	Round       NullableString `json:"round,omitempty"`
-	HomeTeam    TeamRef        `json:"home_team"`
-	AwayTeam    TeamRef        `json:"away_team"`
-	// True when at least one side is an undecided knockout-bracket slot (the source renders placeholders like \"W93\" or \"L101\" until the pairing is known).
-	IsPlaceholder bool `json:"is_placeholder"`
-	// Kickoff normalized to UTC; null if the time could not be parsed.
-	KickoffUtc NullableTime `json:"kickoff_utc,omitempty"`
-	// Kickoff date+time in the source's rendering zone, cleaned of live/status markers (e.g. \"Jul 5, 2026 16:00\"); null if the time could not be parsed.
-	KickoffLocal NullableString `json:"kickoff_local,omitempty"`
-	// Raw kickoff header exactly as rendered by the source — debug/diagnostic aid.
-	KickoffRaw NullableString `json:"kickoff_raw,omitempty"`
-	Venue      NullableString `json:"venue,omitempty"`
-	Score      NullableScore  `json:"score,omitempty"`
-	// Empty for scheduled matches.
-	Events []MatchEvent `json:"events,omitempty"`
-	// Empty for scheduled matches.
-	Stats   []MatchStat     `json:"stats,omitempty"`
-	Lineups NullableLineups `json:"lineups,omitempty"`
-	// Per-country broadcast coverage from the source's international coverage table.
-	Broadcasts []CountryBroadcast `json:"broadcasts"`
-	// Official highlights link for finished matches, when present.
-	HighlightsUrl NullableString `json:"highlights_url,omitempty"`
-	UpdatedAt     time.Time      `json:"updated_at"`
+	Competition MatchCompetition `json:"competition"`
+	Fixture     MatchFixture     `json:"fixture"`
 }
 
 type _MatchData MatchData
@@ -57,16 +32,10 @@ type _MatchData MatchData
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMatchData(id int64, status MatchStatus, competition CompetitionRef, homeTeam TeamRef, awayTeam TeamRef, isPlaceholder bool, broadcasts []CountryBroadcast, updatedAt time.Time) *MatchData {
+func NewMatchData(competition MatchCompetition, fixture MatchFixture) *MatchData {
 	this := MatchData{}
-	this.Id = id
-	this.Status = status
 	this.Competition = competition
-	this.HomeTeam = homeTeam
-	this.AwayTeam = awayTeam
-	this.IsPlaceholder = isPlaceholder
-	this.Broadcasts = broadcasts
-	this.UpdatedAt = updatedAt
+	this.Fixture = fixture
 	return &this
 }
 
@@ -78,58 +47,10 @@ func NewMatchDataWithDefaults() *MatchData {
 	return &this
 }
 
-// GetId returns the Id field value
-func (o *MatchData) GetId() int64 {
-	if o == nil {
-		var ret int64
-		return ret
-	}
-
-	return o.Id
-}
-
-// GetIdOk returns a tuple with the Id field value
-// and a boolean to check if the value has been set.
-func (o *MatchData) GetIdOk() (*int64, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.Id, true
-}
-
-// SetId sets field value
-func (o *MatchData) SetId(v int64) {
-	o.Id = v
-}
-
-// GetStatus returns the Status field value
-func (o *MatchData) GetStatus() MatchStatus {
-	if o == nil {
-		var ret MatchStatus
-		return ret
-	}
-
-	return o.Status
-}
-
-// GetStatusOk returns a tuple with the Status field value
-// and a boolean to check if the value has been set.
-func (o *MatchData) GetStatusOk() (*MatchStatus, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.Status, true
-}
-
-// SetStatus sets field value
-func (o *MatchData) SetStatus(v MatchStatus) {
-	o.Status = v
-}
-
 // GetCompetition returns the Competition field value
-func (o *MatchData) GetCompetition() CompetitionRef {
+func (o *MatchData) GetCompetition() MatchCompetition {
 	if o == nil {
-		var ret CompetitionRef
+		var ret MatchCompetition
 		return ret
 	}
 
@@ -138,7 +59,7 @@ func (o *MatchData) GetCompetition() CompetitionRef {
 
 // GetCompetitionOk returns a tuple with the Competition field value
 // and a boolean to check if the value has been set.
-func (o *MatchData) GetCompetitionOk() (*CompetitionRef, bool) {
+func (o *MatchData) GetCompetitionOk() (*MatchCompetition, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -146,536 +67,32 @@ func (o *MatchData) GetCompetitionOk() (*CompetitionRef, bool) {
 }
 
 // SetCompetition sets field value
-func (o *MatchData) SetCompetition(v CompetitionRef) {
+func (o *MatchData) SetCompetition(v MatchCompetition) {
 	o.Competition = v
 }
 
-// GetRound returns the Round field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MatchData) GetRound() string {
-	if o == nil || IsNil(o.Round.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.Round.Get()
-}
-
-// GetRoundOk returns a tuple with the Round field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MatchData) GetRoundOk() (*string, bool) {
+// GetFixture returns the Fixture field value
+func (o *MatchData) GetFixture() MatchFixture {
 	if o == nil {
-		return nil, false
-	}
-	return o.Round.Get(), o.Round.IsSet()
-}
-
-// HasRound returns a boolean if a field has been set.
-func (o *MatchData) HasRound() bool {
-	if o != nil && o.Round.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetRound gets a reference to the given NullableString and assigns it to the Round field.
-func (o *MatchData) SetRound(v string) {
-	o.Round.Set(&v)
-}
-
-// SetRoundNil sets the value for Round to be an explicit nil
-func (o *MatchData) SetRoundNil() {
-	o.Round.Set(nil)
-}
-
-// UnsetRound ensures that no value is present for Round, not even an explicit nil
-func (o *MatchData) UnsetRound() {
-	o.Round.Unset()
-}
-
-// GetHomeTeam returns the HomeTeam field value
-func (o *MatchData) GetHomeTeam() TeamRef {
-	if o == nil {
-		var ret TeamRef
+		var ret MatchFixture
 		return ret
 	}
 
-	return o.HomeTeam
+	return o.Fixture
 }
 
-// GetHomeTeamOk returns a tuple with the HomeTeam field value
+// GetFixtureOk returns a tuple with the Fixture field value
 // and a boolean to check if the value has been set.
-func (o *MatchData) GetHomeTeamOk() (*TeamRef, bool) {
+func (o *MatchData) GetFixtureOk() (*MatchFixture, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.HomeTeam, true
+	return &o.Fixture, true
 }
 
-// SetHomeTeam sets field value
-func (o *MatchData) SetHomeTeam(v TeamRef) {
-	o.HomeTeam = v
-}
-
-// GetAwayTeam returns the AwayTeam field value
-func (o *MatchData) GetAwayTeam() TeamRef {
-	if o == nil {
-		var ret TeamRef
-		return ret
-	}
-
-	return o.AwayTeam
-}
-
-// GetAwayTeamOk returns a tuple with the AwayTeam field value
-// and a boolean to check if the value has been set.
-func (o *MatchData) GetAwayTeamOk() (*TeamRef, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.AwayTeam, true
-}
-
-// SetAwayTeam sets field value
-func (o *MatchData) SetAwayTeam(v TeamRef) {
-	o.AwayTeam = v
-}
-
-// GetIsPlaceholder returns the IsPlaceholder field value
-func (o *MatchData) GetIsPlaceholder() bool {
-	if o == nil {
-		var ret bool
-		return ret
-	}
-
-	return o.IsPlaceholder
-}
-
-// GetIsPlaceholderOk returns a tuple with the IsPlaceholder field value
-// and a boolean to check if the value has been set.
-func (o *MatchData) GetIsPlaceholderOk() (*bool, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.IsPlaceholder, true
-}
-
-// SetIsPlaceholder sets field value
-func (o *MatchData) SetIsPlaceholder(v bool) {
-	o.IsPlaceholder = v
-}
-
-// GetKickoffUtc returns the KickoffUtc field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MatchData) GetKickoffUtc() time.Time {
-	if o == nil || IsNil(o.KickoffUtc.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.KickoffUtc.Get()
-}
-
-// GetKickoffUtcOk returns a tuple with the KickoffUtc field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MatchData) GetKickoffUtcOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.KickoffUtc.Get(), o.KickoffUtc.IsSet()
-}
-
-// HasKickoffUtc returns a boolean if a field has been set.
-func (o *MatchData) HasKickoffUtc() bool {
-	if o != nil && o.KickoffUtc.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetKickoffUtc gets a reference to the given NullableTime and assigns it to the KickoffUtc field.
-func (o *MatchData) SetKickoffUtc(v time.Time) {
-	o.KickoffUtc.Set(&v)
-}
-
-// SetKickoffUtcNil sets the value for KickoffUtc to be an explicit nil
-func (o *MatchData) SetKickoffUtcNil() {
-	o.KickoffUtc.Set(nil)
-}
-
-// UnsetKickoffUtc ensures that no value is present for KickoffUtc, not even an explicit nil
-func (o *MatchData) UnsetKickoffUtc() {
-	o.KickoffUtc.Unset()
-}
-
-// GetKickoffLocal returns the KickoffLocal field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MatchData) GetKickoffLocal() string {
-	if o == nil || IsNil(o.KickoffLocal.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.KickoffLocal.Get()
-}
-
-// GetKickoffLocalOk returns a tuple with the KickoffLocal field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MatchData) GetKickoffLocalOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.KickoffLocal.Get(), o.KickoffLocal.IsSet()
-}
-
-// HasKickoffLocal returns a boolean if a field has been set.
-func (o *MatchData) HasKickoffLocal() bool {
-	if o != nil && o.KickoffLocal.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetKickoffLocal gets a reference to the given NullableString and assigns it to the KickoffLocal field.
-func (o *MatchData) SetKickoffLocal(v string) {
-	o.KickoffLocal.Set(&v)
-}
-
-// SetKickoffLocalNil sets the value for KickoffLocal to be an explicit nil
-func (o *MatchData) SetKickoffLocalNil() {
-	o.KickoffLocal.Set(nil)
-}
-
-// UnsetKickoffLocal ensures that no value is present for KickoffLocal, not even an explicit nil
-func (o *MatchData) UnsetKickoffLocal() {
-	o.KickoffLocal.Unset()
-}
-
-// GetKickoffRaw returns the KickoffRaw field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MatchData) GetKickoffRaw() string {
-	if o == nil || IsNil(o.KickoffRaw.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.KickoffRaw.Get()
-}
-
-// GetKickoffRawOk returns a tuple with the KickoffRaw field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MatchData) GetKickoffRawOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.KickoffRaw.Get(), o.KickoffRaw.IsSet()
-}
-
-// HasKickoffRaw returns a boolean if a field has been set.
-func (o *MatchData) HasKickoffRaw() bool {
-	if o != nil && o.KickoffRaw.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetKickoffRaw gets a reference to the given NullableString and assigns it to the KickoffRaw field.
-func (o *MatchData) SetKickoffRaw(v string) {
-	o.KickoffRaw.Set(&v)
-}
-
-// SetKickoffRawNil sets the value for KickoffRaw to be an explicit nil
-func (o *MatchData) SetKickoffRawNil() {
-	o.KickoffRaw.Set(nil)
-}
-
-// UnsetKickoffRaw ensures that no value is present for KickoffRaw, not even an explicit nil
-func (o *MatchData) UnsetKickoffRaw() {
-	o.KickoffRaw.Unset()
-}
-
-// GetVenue returns the Venue field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MatchData) GetVenue() string {
-	if o == nil || IsNil(o.Venue.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.Venue.Get()
-}
-
-// GetVenueOk returns a tuple with the Venue field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MatchData) GetVenueOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Venue.Get(), o.Venue.IsSet()
-}
-
-// HasVenue returns a boolean if a field has been set.
-func (o *MatchData) HasVenue() bool {
-	if o != nil && o.Venue.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetVenue gets a reference to the given NullableString and assigns it to the Venue field.
-func (o *MatchData) SetVenue(v string) {
-	o.Venue.Set(&v)
-}
-
-// SetVenueNil sets the value for Venue to be an explicit nil
-func (o *MatchData) SetVenueNil() {
-	o.Venue.Set(nil)
-}
-
-// UnsetVenue ensures that no value is present for Venue, not even an explicit nil
-func (o *MatchData) UnsetVenue() {
-	o.Venue.Unset()
-}
-
-// GetScore returns the Score field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MatchData) GetScore() Score {
-	if o == nil || IsNil(o.Score.Get()) {
-		var ret Score
-		return ret
-	}
-	return *o.Score.Get()
-}
-
-// GetScoreOk returns a tuple with the Score field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MatchData) GetScoreOk() (*Score, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Score.Get(), o.Score.IsSet()
-}
-
-// HasScore returns a boolean if a field has been set.
-func (o *MatchData) HasScore() bool {
-	if o != nil && o.Score.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetScore gets a reference to the given NullableScore and assigns it to the Score field.
-func (o *MatchData) SetScore(v Score) {
-	o.Score.Set(&v)
-}
-
-// SetScoreNil sets the value for Score to be an explicit nil
-func (o *MatchData) SetScoreNil() {
-	o.Score.Set(nil)
-}
-
-// UnsetScore ensures that no value is present for Score, not even an explicit nil
-func (o *MatchData) UnsetScore() {
-	o.Score.Unset()
-}
-
-// GetEvents returns the Events field value if set, zero value otherwise.
-func (o *MatchData) GetEvents() []MatchEvent {
-	if o == nil || IsNil(o.Events) {
-		var ret []MatchEvent
-		return ret
-	}
-	return o.Events
-}
-
-// GetEventsOk returns a tuple with the Events field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *MatchData) GetEventsOk() ([]MatchEvent, bool) {
-	if o == nil || IsNil(o.Events) {
-		return nil, false
-	}
-	return o.Events, true
-}
-
-// HasEvents returns a boolean if a field has been set.
-func (o *MatchData) HasEvents() bool {
-	if o != nil && !IsNil(o.Events) {
-		return true
-	}
-
-	return false
-}
-
-// SetEvents gets a reference to the given []MatchEvent and assigns it to the Events field.
-func (o *MatchData) SetEvents(v []MatchEvent) {
-	o.Events = v
-}
-
-// GetStats returns the Stats field value if set, zero value otherwise.
-func (o *MatchData) GetStats() []MatchStat {
-	if o == nil || IsNil(o.Stats) {
-		var ret []MatchStat
-		return ret
-	}
-	return o.Stats
-}
-
-// GetStatsOk returns a tuple with the Stats field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *MatchData) GetStatsOk() ([]MatchStat, bool) {
-	if o == nil || IsNil(o.Stats) {
-		return nil, false
-	}
-	return o.Stats, true
-}
-
-// HasStats returns a boolean if a field has been set.
-func (o *MatchData) HasStats() bool {
-	if o != nil && !IsNil(o.Stats) {
-		return true
-	}
-
-	return false
-}
-
-// SetStats gets a reference to the given []MatchStat and assigns it to the Stats field.
-func (o *MatchData) SetStats(v []MatchStat) {
-	o.Stats = v
-}
-
-// GetLineups returns the Lineups field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MatchData) GetLineups() Lineups {
-	if o == nil || IsNil(o.Lineups.Get()) {
-		var ret Lineups
-		return ret
-	}
-	return *o.Lineups.Get()
-}
-
-// GetLineupsOk returns a tuple with the Lineups field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MatchData) GetLineupsOk() (*Lineups, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Lineups.Get(), o.Lineups.IsSet()
-}
-
-// HasLineups returns a boolean if a field has been set.
-func (o *MatchData) HasLineups() bool {
-	if o != nil && o.Lineups.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetLineups gets a reference to the given NullableLineups and assigns it to the Lineups field.
-func (o *MatchData) SetLineups(v Lineups) {
-	o.Lineups.Set(&v)
-}
-
-// SetLineupsNil sets the value for Lineups to be an explicit nil
-func (o *MatchData) SetLineupsNil() {
-	o.Lineups.Set(nil)
-}
-
-// UnsetLineups ensures that no value is present for Lineups, not even an explicit nil
-func (o *MatchData) UnsetLineups() {
-	o.Lineups.Unset()
-}
-
-// GetBroadcasts returns the Broadcasts field value
-func (o *MatchData) GetBroadcasts() []CountryBroadcast {
-	if o == nil {
-		var ret []CountryBroadcast
-		return ret
-	}
-
-	return o.Broadcasts
-}
-
-// GetBroadcastsOk returns a tuple with the Broadcasts field value
-// and a boolean to check if the value has been set.
-func (o *MatchData) GetBroadcastsOk() ([]CountryBroadcast, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Broadcasts, true
-}
-
-// SetBroadcasts sets field value
-func (o *MatchData) SetBroadcasts(v []CountryBroadcast) {
-	o.Broadcasts = v
-}
-
-// GetHighlightsUrl returns the HighlightsUrl field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MatchData) GetHighlightsUrl() string {
-	if o == nil || IsNil(o.HighlightsUrl.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.HighlightsUrl.Get()
-}
-
-// GetHighlightsUrlOk returns a tuple with the HighlightsUrl field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MatchData) GetHighlightsUrlOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.HighlightsUrl.Get(), o.HighlightsUrl.IsSet()
-}
-
-// HasHighlightsUrl returns a boolean if a field has been set.
-func (o *MatchData) HasHighlightsUrl() bool {
-	if o != nil && o.HighlightsUrl.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetHighlightsUrl gets a reference to the given NullableString and assigns it to the HighlightsUrl field.
-func (o *MatchData) SetHighlightsUrl(v string) {
-	o.HighlightsUrl.Set(&v)
-}
-
-// SetHighlightsUrlNil sets the value for HighlightsUrl to be an explicit nil
-func (o *MatchData) SetHighlightsUrlNil() {
-	o.HighlightsUrl.Set(nil)
-}
-
-// UnsetHighlightsUrl ensures that no value is present for HighlightsUrl, not even an explicit nil
-func (o *MatchData) UnsetHighlightsUrl() {
-	o.HighlightsUrl.Unset()
-}
-
-// GetUpdatedAt returns the UpdatedAt field value
-func (o *MatchData) GetUpdatedAt() time.Time {
-	if o == nil {
-		var ret time.Time
-		return ret
-	}
-
-	return o.UpdatedAt
-}
-
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
-// and a boolean to check if the value has been set.
-func (o *MatchData) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.UpdatedAt, true
-}
-
-// SetUpdatedAt sets field value
-func (o *MatchData) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt = v
+// SetFixture sets field value
+func (o *MatchData) SetFixture(v MatchFixture) {
+	o.Fixture = v
 }
 
 func (o MatchData) MarshalJSON() ([]byte, error) {
@@ -688,44 +105,8 @@ func (o MatchData) MarshalJSON() ([]byte, error) {
 
 func (o MatchData) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["id"] = o.Id
-	toSerialize["status"] = o.Status
 	toSerialize["competition"] = o.Competition
-	if o.Round.IsSet() {
-		toSerialize["round"] = o.Round.Get()
-	}
-	toSerialize["home_team"] = o.HomeTeam
-	toSerialize["away_team"] = o.AwayTeam
-	toSerialize["is_placeholder"] = o.IsPlaceholder
-	if o.KickoffUtc.IsSet() {
-		toSerialize["kickoff_utc"] = o.KickoffUtc.Get()
-	}
-	if o.KickoffLocal.IsSet() {
-		toSerialize["kickoff_local"] = o.KickoffLocal.Get()
-	}
-	if o.KickoffRaw.IsSet() {
-		toSerialize["kickoff_raw"] = o.KickoffRaw.Get()
-	}
-	if o.Venue.IsSet() {
-		toSerialize["venue"] = o.Venue.Get()
-	}
-	if o.Score.IsSet() {
-		toSerialize["score"] = o.Score.Get()
-	}
-	if !IsNil(o.Events) {
-		toSerialize["events"] = o.Events
-	}
-	if !IsNil(o.Stats) {
-		toSerialize["stats"] = o.Stats
-	}
-	if o.Lineups.IsSet() {
-		toSerialize["lineups"] = o.Lineups.Get()
-	}
-	toSerialize["broadcasts"] = o.Broadcasts
-	if o.HighlightsUrl.IsSet() {
-		toSerialize["highlights_url"] = o.HighlightsUrl.Get()
-	}
-	toSerialize["updated_at"] = o.UpdatedAt
+	toSerialize["fixture"] = o.Fixture
 	return toSerialize, nil
 }
 
@@ -734,14 +115,8 @@ func (o *MatchData) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"id",
-		"status",
 		"competition",
-		"home_team",
-		"away_team",
-		"is_placeholder",
-		"broadcasts",
-		"updated_at",
+		"fixture",
 	}
 
 	allProperties := make(map[string]interface{})

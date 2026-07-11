@@ -4,48 +4,38 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"time"
 )
 
-func TestSportSnapChannel(t *testing.T) {
+func TestSportSnapLivescores(t *testing.T) {
 	c, _ := newTestClient(t, 2)
-	ch, err := c.SportSnap.Channel(context.Background(), "bein-connect-turkey")
+	board, err := c.SportSnap.Livescores(context.Background())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if ch.GetSlug() != "bein-connect-turkey" {
-		t.Errorf("slug = %q, want bein-connect-turkey", ch.GetSlug())
+	if board.GetSport() != "soccer" {
+		t.Errorf("sport = %q, want soccer", board.GetSport())
 	}
-	rights := ch.GetBroadcastRights()
-	if len(rights) != 1 || rights[0].GetCompetition() != "England - Premier League" {
-		t.Errorf("broadcast_rights = %+v, want one Premier League entry", rights)
+	matches := board.GetMatches()
+	if len(matches) != 1 || matches[0].GetGame() != "Brazil vs Norway" {
+		t.Fatalf("matches = %+v, want one Brazil vs Norway entry", matches)
 	}
-	if rights[0].GetYearEnd() != 2027 {
-		t.Errorf("year_end = %d, want 2027", rights[0].GetYearEnd())
+	if matches[0].GetResult() != "2 - 1" {
+		t.Errorf("result = %q, want 2 - 1", matches[0].GetResult())
 	}
 }
 
-func TestSportSnapChannelSchedule(t *testing.T) {
+func TestSportSnapMatches(t *testing.T) {
 	c, _ := newTestClient(t, 2)
-	sched, err := c.SportSnap.ChannelSchedule(context.Background(), "bein-connect-turkey")
+	fx, err := c.SportSnap.Matches(context.Background(), "TR")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	entries := sched.GetEntries()
-	if len(entries) != 1 {
-		t.Fatalf("entries = %d, want 1", len(entries))
+	comps := fx.GetCompetitions()
+	if len(comps) != 1 || comps[0].GetCompetition() != "Friendly" {
+		t.Fatalf("competitions = %+v, want one Friendly entry", comps)
 	}
-	if entries[0].GetMatchId() != 5542814 {
-		t.Errorf("match_id = %d, want 5542814", entries[0].GetMatchId())
-	}
-	if entries[0].GetMatchTitle() != "Brazil vs Norway" {
-		t.Errorf("match_title = %q, want Brazil vs Norway", entries[0].GetMatchTitle())
-	}
-	if entries[0].GetIsPlaceholder() {
-		t.Error("is_placeholder = true, want false")
-	}
-	if entries[0].GetKickoffLocal() != "10:00pm" || entries[0].GetKickoffRaw() != "10:00pm" {
-		t.Errorf("kickoff_local/kickoff_raw = %q/%q, want 10:00pm/10:00pm", entries[0].GetKickoffLocal(), entries[0].GetKickoffRaw())
+	if f := comps[0].GetFixtures(); len(f) != 1 || f[0].GetTeam1Name() != "Brazil" {
+		t.Errorf("fixtures = %+v, want Brazil vs Norway", f)
 	}
 }
 
@@ -55,19 +45,13 @@ func TestSportSnapMatch(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if string(match.GetStatus()) != "finished" {
-		t.Errorf("status = %q, want finished", match.GetStatus())
+	comp := match.GetCompetition()
+	if comp.GetCompetition() != "Friendly" {
+		t.Errorf("competition = %q, want Friendly", comp.GetCompetition())
 	}
-	score := match.GetScore()
-	if score.GetHome() != 2 || score.GetAway() != 1 {
-		t.Errorf("score = %d-%d, want 2-1", score.GetHome(), score.GetAway())
-	}
-	broadcasts := match.GetBroadcasts()
-	if len(broadcasts) != 1 || broadcasts[0].GetCountrySlug() != "turkey" {
-		t.Fatalf("broadcasts = %+v, want one turkey entry", broadcasts)
-	}
-	if chs := broadcasts[0].GetChannels(); len(chs) != 1 || chs[0].GetSlug() != "bein-connect-turkey" {
-		t.Errorf("channels = %+v, want bein-connect-turkey", chs)
+	fixture := match.GetFixture()
+	if fixture.GetFixtureId() != "5542814" || fixture.GetResult() != "2 - 1" {
+		t.Errorf("fixture = %+v, want id 5542814 result 2 - 1", fixture)
 	}
 }
 
@@ -80,44 +64,109 @@ func TestSportSnapMatchNotFound(t *testing.T) {
 	}
 }
 
-func TestSportSnapCountryChannels(t *testing.T) {
+func TestSportSnapCompetitions(t *testing.T) {
 	c, _ := newTestClient(t, 2)
-	cc, err := c.SportSnap.CountryChannels(context.Background(), "turkey")
+	cat, err := c.SportSnap.Competitions(context.Background(), "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if cc.GetCountry() != "Turkey" {
-		t.Errorf("country = %q, want Turkey", cc.GetCountry())
+	comps := cat.GetCompetitions()
+	popular := comps.GetCompPopular()
+	if len(popular) != 1 || popular[0].GetName() != "Premier League" {
+		t.Errorf("comp_popular = %+v, want one Premier League entry", popular)
 	}
-	if chs := cc.GetChannels(); len(chs) != 1 || chs[0].GetSlug() != "bein-connect-turkey" {
+}
+
+func TestSportSnapCompetition(t *testing.T) {
+	c, _ := newTestClient(t, 2)
+	comp, err := c.SportSnap.Competition(context.Background(), "england", "premier-league")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	header := comp.GetCompetition()
+	if header.GetSlug() != "premier-league" {
+		t.Errorf("slug = %q, want premier-league", header.GetSlug())
+	}
+	if f := comp.GetFixtures(); len(f) != 1 || f[0].GetTeam1Name() != "Arsenal" {
+		t.Errorf("fixtures = %+v, want Arsenal vs Chelsea", f)
+	}
+}
+
+func TestSportSnapNationalTeam(t *testing.T) {
+	c, _ := newTestClient(t, 2)
+	team, err := c.SportSnap.NationalTeam(context.Background(), "brazil")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	tm := team.GetTeam()
+	if tm.GetTitle() != "Brazil" {
+		t.Errorf("title = %q, want Brazil", tm.GetTitle())
+	}
+}
+
+func TestSportSnapChannels(t *testing.T) {
+	c, _ := newTestClient(t, 2)
+	list, err := c.SportSnap.Channels(context.Background(), "TR")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	chs := list.GetChannels()
+	if len(chs) != 1 || chs[0].GetSlug() != "bein-connect-turkey" {
 		t.Errorf("channels = %+v, want bein-connect-turkey", chs)
 	}
 }
 
-func TestSportSnapDailySchedule(t *testing.T) {
+func TestSportSnapChannelInfo(t *testing.T) {
 	c, _ := newTestClient(t, 2)
-	day, err := c.SportSnap.DailySchedule(context.Background(), "2026-07-05")
+	info, err := c.SportSnap.ChannelInfo(context.Background(), "bein-connect-turkey", "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	comps := day.GetCompetitions()
-	if len(comps) != 1 || comps[0].GetCompetition() != "Friendly" {
-		t.Fatalf("competitions = %+v, want one Friendly entry", comps)
+	channel := info.GetChannel()
+	if channel.GetName() != "beIN CONNECT Turkey" {
+		t.Errorf("name = %q, want beIN CONNECT Turkey", channel.GetName())
 	}
-	if m := comps[0].GetMatches(); len(m) != 1 || m[0].GetTitle() != "Brazil vs Norway" {
-		t.Errorf("matches = %+v, want Brazil vs Norway", m)
+	if rights := info.GetTvRights(); len(rights) != 1 || rights[0].GetName() != "beIN Sports" {
+		t.Errorf("tv_rights = %+v, want one beIN Sports entry", rights)
 	}
 }
 
-func TestSportSnapDailyScheduleTime(t *testing.T) {
+func TestSportSnapNews(t *testing.T) {
 	c, _ := newTestClient(t, 2)
-	// The time.Time variant formats to YYYY-MM-DD and hits the same endpoint.
-	day, err := c.SportSnap.DailyScheduleTime(context.Background(), time.Date(2026, 7, 5, 15, 4, 5, 0, time.UTC))
+	feed, err := c.SportSnap.News(context.Background(), 0, "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if day.GetDate() != "2026-07-05" {
-		t.Errorf("date = %v, want 2026-07-05", day.GetDate())
+	articles := feed.GetArticles()
+	if len(articles) != 1 || articles[0].GetTitle() != "Transfer news" {
+		t.Errorf("articles = %+v, want one Transfer news entry", articles)
+	}
+}
+
+func TestSportSnapSearchAll(t *testing.T) {
+	c, _ := newTestClient(t, 2)
+	res, err := c.SportSnap.SearchAll(context.Background(), "barcelona")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	results := res.GetResults()
+	if len(results) != 1 || results[0].GetTitle() != "Barcelona" {
+		t.Errorf("results = %+v, want one Barcelona entry", results)
+	}
+	if results[0].GetType() != "team" {
+		t.Errorf("type = %q, want team", results[0].GetType())
+	}
+}
+
+func TestSportSnapPlayer(t *testing.T) {
+	c, _ := newTestClient(t, 2)
+	player, err := c.SportSnap.Player(context.Background(), "messi", 123)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	profile := player.GetProfile()
+	if profile.GetName() != "Lionel Messi" {
+		t.Errorf("name = %q, want Lionel Messi", profile.GetName())
 	}
 }
 
@@ -126,11 +175,11 @@ func TestSportSnapVersionPinning(t *testing.T) {
 	if c.SportSnap.V1() != c.SportSnap.V1() {
 		t.Error("V1() should return the same cached instance")
 	}
-	ch, err := c.SportSnap.V1().Channel(context.Background(), "bein-connect-turkey")
+	board, err := c.SportSnap.V1().Livescores(context.Background())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if ch.GetSlug() != "bein-connect-turkey" {
-		t.Errorf("slug = %q, want bein-connect-turkey", ch.GetSlug())
+	if board.GetSport() != "soccer" {
+		t.Errorf("sport = %q, want soccer", board.GetSport())
 	}
 }

@@ -1,7 +1,7 @@
 /*
 CrawlSnap API
 
-CrawlSnap is a data intelligence platform. It delivers structured, on-demand data through fast, typed HTTP APIs you can call from any language. This reference covers authentication, the response envelope, error handling, and the available CrawlSnap data products:    - **VectorSnap** — reputation, detections, categories, and relationships     for url / hash / ip / domain.   - **PulseSnap** — threat-intelligence pulse (and sandbox) enrichment for     url / hash / ip / domain.   - **SubdoSnap** — paginated subdomain enumeration for a domain.   - **SportSnap** — live football (soccer) TV listings: channel metadata     and broadcast schedules, match details with per-country coverage     (score, events, statistics, and lineups for finished matches),     country channel directories, and daily schedules.  ## Authentication  Authenticate every request with your CrawlSnap API key, sent as a Bearer token in the `Authorization` header:      Authorization: Bearer sk-cs-...  Create and rotate keys from your dashboard. Treat the key like a password: it carries your full quota and must stay secret. Never embed it in client-side code or commit it to source control.  ## Response envelope  Every response — success or error — uses the same envelope:  ```json {   \"data\": { ... },          // payload on success, null on failure   \"is_success\": true,        // authoritative success flag   \"message\": \"Success\",     // human-readable summary   \"response_code\": 200       // mirrors the HTTP status code } ```  Always check `is_success` before reading `data`.  ## Status codes  HTTP status codes follow standard REST semantics; the body `response_code` mirrors the HTTP status.    - **200** — success, `data` populated.   - **400** — invalid input (malformed query or path parameter).   - **401** — missing or invalid API key.   - **402** — out of credits, or monthly quota exceeded.   - **403** — subscription is not active.   - **404** — no data found for the supplied identifier.   - **429** — daily request limit exceeded.   - **5xx** — server error, or the upstream enrichment service was     unavailable / timed out.
+CrawlSnap is a data intelligence platform. It delivers structured, on-demand data through fast, typed HTTP APIs you can call from any language. This reference covers authentication, the response envelope, error handling, and the available CrawlSnap data products:    - **VectorSnap** — reputation, detections, categories, and relationships     for url / hash / ip / domain.   - **PulseSnap** — threat-intelligence pulse (and sandbox) enrichment for     url / hash / ip / domain.   - **SubdoSnap** — paginated subdomain enumeration for a domain.   - **SportSnap** — live football (soccer) data: live scores with     in-match events, fixtures with per-region broadcast channels, match     details (lineups, events, statistics, per-country coverage),     competitions (fixtures, standings, top scorers, TV rights), teams,     TV channel directories, football news, search, and player profiles.  ## Authentication  Authenticate every request with your CrawlSnap API key, sent as a Bearer token in the `Authorization` header:      Authorization: Bearer sk-cs-...  Create and rotate keys from your dashboard. Treat the key like a password: it carries your full quota and must stay secret. Never embed it in client-side code or commit it to source control.  ## Response envelope  Every response — success or error — uses the same envelope:  ```json {   \"data\": { ... },          // payload on success, null on failure   \"is_success\": true,        // authoritative success flag   \"message\": \"Success\",     // human-readable summary   \"response_code\": 200       // mirrors the HTTP status code } ```  Always check `is_success` before reading `data`.  ## Status codes  HTTP status codes follow standard REST semantics; the body `response_code` mirrors the HTTP status.    - **200** — success, `data` populated.   - **400** — invalid input (malformed query or path parameter).   - **401** — missing or invalid API key.   - **402** — out of credits, or monthly quota exceeded.   - **403** — subscription is not active.   - **404** — no data found for the supplied identifier.   - **429** — daily request limit exceeded.   - **5xx** — server error, or the upstream enrichment service was     unavailable / timed out.
 
 API version: 1.0.0
 Contact: support@crawlsnap.com
@@ -12,9 +12,7 @@ Contact: support@crawlsnap.com
 package models
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 )
 
 // checks if the BroadcastChannel type satisfies the MappedNullable interface at compile time
@@ -22,20 +20,32 @@ var _ MappedNullable = &BroadcastChannel{}
 
 // BroadcastChannel struct for BroadcastChannel
 type BroadcastChannel struct {
-	Name string `json:"name"`
-	// Channel slug usable with `/api/v1/channels/{slug}`; null when the source did not link the channel.
-	Slug NullableString `json:"slug,omitempty"`
+	ChannelId *string `json:"channel_id,omitempty"`
+	// Channel slug usable with `/api/v1/channels/{slug}/info`.
+	Slug *string `json:"slug,omitempty"`
+	Name *string `json:"name,omitempty"`
+	// Pipe-delimited country list as sent by the source, e.g. `|United States|`.
+	Country    *string           `json:"country,omitempty"`
+	Countries  *string           `json:"countries,omitempty"`
+	Coverage   *string           `json:"coverage,omitempty"`
+	Betting    *string           `json:"betting,omitempty"`
+	MobileUrl  *string           `json:"mobile_url,omitempty"`
+	IosUrl     *string           `json:"ios_url,omitempty"`
+	AndroidUrl *string           `json:"android_url,omitempty"`
+	Blocked    *string           `json:"blocked,omitempty"`
+	Allowed    *string           `json:"allowed,omitempty"`
+	StreamNote *string           `json:"stream_note,omitempty"`
+	Note       *string           `json:"note,omitempty"`
+	RadioUrl   *string           `json:"radio_url,omitempty"`
+	Platforms  []ChannelPlatform `json:"platforms,omitempty"`
 }
-
-type _BroadcastChannel BroadcastChannel
 
 // NewBroadcastChannel instantiates a new BroadcastChannel object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBroadcastChannel(name string) *BroadcastChannel {
+func NewBroadcastChannel() *BroadcastChannel {
 	this := BroadcastChannel{}
-	this.Name = name
 	return &this
 }
 
@@ -47,71 +57,516 @@ func NewBroadcastChannelWithDefaults() *BroadcastChannel {
 	return &this
 }
 
-// GetName returns the Name field value
-func (o *BroadcastChannel) GetName() string {
-	if o == nil {
+// GetChannelId returns the ChannelId field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetChannelId() string {
+	if o == nil || IsNil(o.ChannelId) {
 		var ret string
 		return ret
 	}
-
-	return o.Name
+	return *o.ChannelId
 }
 
-// GetNameOk returns a tuple with the Name field value
+// GetChannelIdOk returns a tuple with the ChannelId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *BroadcastChannel) GetNameOk() (*string, bool) {
-	if o == nil {
+func (o *BroadcastChannel) GetChannelIdOk() (*string, bool) {
+	if o == nil || IsNil(o.ChannelId) {
 		return nil, false
 	}
-	return &o.Name, true
+	return o.ChannelId, true
 }
 
-// SetName sets field value
-func (o *BroadcastChannel) SetName(v string) {
-	o.Name = v
-}
-
-// GetSlug returns the Slug field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *BroadcastChannel) GetSlug() string {
-	if o == nil || IsNil(o.Slug.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.Slug.Get()
-}
-
-// GetSlugOk returns a tuple with the Slug field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *BroadcastChannel) GetSlugOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Slug.Get(), o.Slug.IsSet()
-}
-
-// HasSlug returns a boolean if a field has been set.
-func (o *BroadcastChannel) HasSlug() bool {
-	if o != nil && o.Slug.IsSet() {
+// HasChannelId returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasChannelId() bool {
+	if o != nil && !IsNil(o.ChannelId) {
 		return true
 	}
 
 	return false
 }
 
-// SetSlug gets a reference to the given NullableString and assigns it to the Slug field.
+// SetChannelId gets a reference to the given string and assigns it to the ChannelId field.
+func (o *BroadcastChannel) SetChannelId(v string) {
+	o.ChannelId = &v
+}
+
+// GetSlug returns the Slug field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetSlug() string {
+	if o == nil || IsNil(o.Slug) {
+		var ret string
+		return ret
+	}
+	return *o.Slug
+}
+
+// GetSlugOk returns a tuple with the Slug field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetSlugOk() (*string, bool) {
+	if o == nil || IsNil(o.Slug) {
+		return nil, false
+	}
+	return o.Slug, true
+}
+
+// HasSlug returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasSlug() bool {
+	if o != nil && !IsNil(o.Slug) {
+		return true
+	}
+
+	return false
+}
+
+// SetSlug gets a reference to the given string and assigns it to the Slug field.
 func (o *BroadcastChannel) SetSlug(v string) {
-	o.Slug.Set(&v)
+	o.Slug = &v
 }
 
-// SetSlugNil sets the value for Slug to be an explicit nil
-func (o *BroadcastChannel) SetSlugNil() {
-	o.Slug.Set(nil)
+// GetName returns the Name field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetName() string {
+	if o == nil || IsNil(o.Name) {
+		var ret string
+		return ret
+	}
+	return *o.Name
 }
 
-// UnsetSlug ensures that no value is present for Slug, not even an explicit nil
-func (o *BroadcastChannel) UnsetSlug() {
-	o.Slug.Unset()
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetNameOk() (*string, bool) {
+	if o == nil || IsNil(o.Name) {
+		return nil, false
+	}
+	return o.Name, true
+}
+
+// HasName returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasName() bool {
+	if o != nil && !IsNil(o.Name) {
+		return true
+	}
+
+	return false
+}
+
+// SetName gets a reference to the given string and assigns it to the Name field.
+func (o *BroadcastChannel) SetName(v string) {
+	o.Name = &v
+}
+
+// GetCountry returns the Country field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetCountry() string {
+	if o == nil || IsNil(o.Country) {
+		var ret string
+		return ret
+	}
+	return *o.Country
+}
+
+// GetCountryOk returns a tuple with the Country field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetCountryOk() (*string, bool) {
+	if o == nil || IsNil(o.Country) {
+		return nil, false
+	}
+	return o.Country, true
+}
+
+// HasCountry returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasCountry() bool {
+	if o != nil && !IsNil(o.Country) {
+		return true
+	}
+
+	return false
+}
+
+// SetCountry gets a reference to the given string and assigns it to the Country field.
+func (o *BroadcastChannel) SetCountry(v string) {
+	o.Country = &v
+}
+
+// GetCountries returns the Countries field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetCountries() string {
+	if o == nil || IsNil(o.Countries) {
+		var ret string
+		return ret
+	}
+	return *o.Countries
+}
+
+// GetCountriesOk returns a tuple with the Countries field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetCountriesOk() (*string, bool) {
+	if o == nil || IsNil(o.Countries) {
+		return nil, false
+	}
+	return o.Countries, true
+}
+
+// HasCountries returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasCountries() bool {
+	if o != nil && !IsNil(o.Countries) {
+		return true
+	}
+
+	return false
+}
+
+// SetCountries gets a reference to the given string and assigns it to the Countries field.
+func (o *BroadcastChannel) SetCountries(v string) {
+	o.Countries = &v
+}
+
+// GetCoverage returns the Coverage field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetCoverage() string {
+	if o == nil || IsNil(o.Coverage) {
+		var ret string
+		return ret
+	}
+	return *o.Coverage
+}
+
+// GetCoverageOk returns a tuple with the Coverage field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetCoverageOk() (*string, bool) {
+	if o == nil || IsNil(o.Coverage) {
+		return nil, false
+	}
+	return o.Coverage, true
+}
+
+// HasCoverage returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasCoverage() bool {
+	if o != nil && !IsNil(o.Coverage) {
+		return true
+	}
+
+	return false
+}
+
+// SetCoverage gets a reference to the given string and assigns it to the Coverage field.
+func (o *BroadcastChannel) SetCoverage(v string) {
+	o.Coverage = &v
+}
+
+// GetBetting returns the Betting field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetBetting() string {
+	if o == nil || IsNil(o.Betting) {
+		var ret string
+		return ret
+	}
+	return *o.Betting
+}
+
+// GetBettingOk returns a tuple with the Betting field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetBettingOk() (*string, bool) {
+	if o == nil || IsNil(o.Betting) {
+		return nil, false
+	}
+	return o.Betting, true
+}
+
+// HasBetting returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasBetting() bool {
+	if o != nil && !IsNil(o.Betting) {
+		return true
+	}
+
+	return false
+}
+
+// SetBetting gets a reference to the given string and assigns it to the Betting field.
+func (o *BroadcastChannel) SetBetting(v string) {
+	o.Betting = &v
+}
+
+// GetMobileUrl returns the MobileUrl field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetMobileUrl() string {
+	if o == nil || IsNil(o.MobileUrl) {
+		var ret string
+		return ret
+	}
+	return *o.MobileUrl
+}
+
+// GetMobileUrlOk returns a tuple with the MobileUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetMobileUrlOk() (*string, bool) {
+	if o == nil || IsNil(o.MobileUrl) {
+		return nil, false
+	}
+	return o.MobileUrl, true
+}
+
+// HasMobileUrl returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasMobileUrl() bool {
+	if o != nil && !IsNil(o.MobileUrl) {
+		return true
+	}
+
+	return false
+}
+
+// SetMobileUrl gets a reference to the given string and assigns it to the MobileUrl field.
+func (o *BroadcastChannel) SetMobileUrl(v string) {
+	o.MobileUrl = &v
+}
+
+// GetIosUrl returns the IosUrl field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetIosUrl() string {
+	if o == nil || IsNil(o.IosUrl) {
+		var ret string
+		return ret
+	}
+	return *o.IosUrl
+}
+
+// GetIosUrlOk returns a tuple with the IosUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetIosUrlOk() (*string, bool) {
+	if o == nil || IsNil(o.IosUrl) {
+		return nil, false
+	}
+	return o.IosUrl, true
+}
+
+// HasIosUrl returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasIosUrl() bool {
+	if o != nil && !IsNil(o.IosUrl) {
+		return true
+	}
+
+	return false
+}
+
+// SetIosUrl gets a reference to the given string and assigns it to the IosUrl field.
+func (o *BroadcastChannel) SetIosUrl(v string) {
+	o.IosUrl = &v
+}
+
+// GetAndroidUrl returns the AndroidUrl field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetAndroidUrl() string {
+	if o == nil || IsNil(o.AndroidUrl) {
+		var ret string
+		return ret
+	}
+	return *o.AndroidUrl
+}
+
+// GetAndroidUrlOk returns a tuple with the AndroidUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetAndroidUrlOk() (*string, bool) {
+	if o == nil || IsNil(o.AndroidUrl) {
+		return nil, false
+	}
+	return o.AndroidUrl, true
+}
+
+// HasAndroidUrl returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasAndroidUrl() bool {
+	if o != nil && !IsNil(o.AndroidUrl) {
+		return true
+	}
+
+	return false
+}
+
+// SetAndroidUrl gets a reference to the given string and assigns it to the AndroidUrl field.
+func (o *BroadcastChannel) SetAndroidUrl(v string) {
+	o.AndroidUrl = &v
+}
+
+// GetBlocked returns the Blocked field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetBlocked() string {
+	if o == nil || IsNil(o.Blocked) {
+		var ret string
+		return ret
+	}
+	return *o.Blocked
+}
+
+// GetBlockedOk returns a tuple with the Blocked field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetBlockedOk() (*string, bool) {
+	if o == nil || IsNil(o.Blocked) {
+		return nil, false
+	}
+	return o.Blocked, true
+}
+
+// HasBlocked returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasBlocked() bool {
+	if o != nil && !IsNil(o.Blocked) {
+		return true
+	}
+
+	return false
+}
+
+// SetBlocked gets a reference to the given string and assigns it to the Blocked field.
+func (o *BroadcastChannel) SetBlocked(v string) {
+	o.Blocked = &v
+}
+
+// GetAllowed returns the Allowed field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetAllowed() string {
+	if o == nil || IsNil(o.Allowed) {
+		var ret string
+		return ret
+	}
+	return *o.Allowed
+}
+
+// GetAllowedOk returns a tuple with the Allowed field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetAllowedOk() (*string, bool) {
+	if o == nil || IsNil(o.Allowed) {
+		return nil, false
+	}
+	return o.Allowed, true
+}
+
+// HasAllowed returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasAllowed() bool {
+	if o != nil && !IsNil(o.Allowed) {
+		return true
+	}
+
+	return false
+}
+
+// SetAllowed gets a reference to the given string and assigns it to the Allowed field.
+func (o *BroadcastChannel) SetAllowed(v string) {
+	o.Allowed = &v
+}
+
+// GetStreamNote returns the StreamNote field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetStreamNote() string {
+	if o == nil || IsNil(o.StreamNote) {
+		var ret string
+		return ret
+	}
+	return *o.StreamNote
+}
+
+// GetStreamNoteOk returns a tuple with the StreamNote field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetStreamNoteOk() (*string, bool) {
+	if o == nil || IsNil(o.StreamNote) {
+		return nil, false
+	}
+	return o.StreamNote, true
+}
+
+// HasStreamNote returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasStreamNote() bool {
+	if o != nil && !IsNil(o.StreamNote) {
+		return true
+	}
+
+	return false
+}
+
+// SetStreamNote gets a reference to the given string and assigns it to the StreamNote field.
+func (o *BroadcastChannel) SetStreamNote(v string) {
+	o.StreamNote = &v
+}
+
+// GetNote returns the Note field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetNote() string {
+	if o == nil || IsNil(o.Note) {
+		var ret string
+		return ret
+	}
+	return *o.Note
+}
+
+// GetNoteOk returns a tuple with the Note field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetNoteOk() (*string, bool) {
+	if o == nil || IsNil(o.Note) {
+		return nil, false
+	}
+	return o.Note, true
+}
+
+// HasNote returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasNote() bool {
+	if o != nil && !IsNil(o.Note) {
+		return true
+	}
+
+	return false
+}
+
+// SetNote gets a reference to the given string and assigns it to the Note field.
+func (o *BroadcastChannel) SetNote(v string) {
+	o.Note = &v
+}
+
+// GetRadioUrl returns the RadioUrl field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetRadioUrl() string {
+	if o == nil || IsNil(o.RadioUrl) {
+		var ret string
+		return ret
+	}
+	return *o.RadioUrl
+}
+
+// GetRadioUrlOk returns a tuple with the RadioUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetRadioUrlOk() (*string, bool) {
+	if o == nil || IsNil(o.RadioUrl) {
+		return nil, false
+	}
+	return o.RadioUrl, true
+}
+
+// HasRadioUrl returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasRadioUrl() bool {
+	if o != nil && !IsNil(o.RadioUrl) {
+		return true
+	}
+
+	return false
+}
+
+// SetRadioUrl gets a reference to the given string and assigns it to the RadioUrl field.
+func (o *BroadcastChannel) SetRadioUrl(v string) {
+	o.RadioUrl = &v
+}
+
+// GetPlatforms returns the Platforms field value if set, zero value otherwise.
+func (o *BroadcastChannel) GetPlatforms() []ChannelPlatform {
+	if o == nil || IsNil(o.Platforms) {
+		var ret []ChannelPlatform
+		return ret
+	}
+	return o.Platforms
+}
+
+// GetPlatformsOk returns a tuple with the Platforms field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *BroadcastChannel) GetPlatformsOk() ([]ChannelPlatform, bool) {
+	if o == nil || IsNil(o.Platforms) {
+		return nil, false
+	}
+	return o.Platforms, true
+}
+
+// HasPlatforms returns a boolean if a field has been set.
+func (o *BroadcastChannel) HasPlatforms() bool {
+	if o != nil && !IsNil(o.Platforms) {
+		return true
+	}
+
+	return false
+}
+
+// SetPlatforms gets a reference to the given []ChannelPlatform and assigns it to the Platforms field.
+func (o *BroadcastChannel) SetPlatforms(v []ChannelPlatform) {
+	o.Platforms = v
 }
 
 func (o BroadcastChannel) MarshalJSON() ([]byte, error) {
@@ -124,48 +579,55 @@ func (o BroadcastChannel) MarshalJSON() ([]byte, error) {
 
 func (o BroadcastChannel) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["name"] = o.Name
-	if o.Slug.IsSet() {
-		toSerialize["slug"] = o.Slug.Get()
+	if !IsNil(o.ChannelId) {
+		toSerialize["channel_id"] = o.ChannelId
+	}
+	if !IsNil(o.Slug) {
+		toSerialize["slug"] = o.Slug
+	}
+	if !IsNil(o.Name) {
+		toSerialize["name"] = o.Name
+	}
+	if !IsNil(o.Country) {
+		toSerialize["country"] = o.Country
+	}
+	if !IsNil(o.Countries) {
+		toSerialize["countries"] = o.Countries
+	}
+	if !IsNil(o.Coverage) {
+		toSerialize["coverage"] = o.Coverage
+	}
+	if !IsNil(o.Betting) {
+		toSerialize["betting"] = o.Betting
+	}
+	if !IsNil(o.MobileUrl) {
+		toSerialize["mobile_url"] = o.MobileUrl
+	}
+	if !IsNil(o.IosUrl) {
+		toSerialize["ios_url"] = o.IosUrl
+	}
+	if !IsNil(o.AndroidUrl) {
+		toSerialize["android_url"] = o.AndroidUrl
+	}
+	if !IsNil(o.Blocked) {
+		toSerialize["blocked"] = o.Blocked
+	}
+	if !IsNil(o.Allowed) {
+		toSerialize["allowed"] = o.Allowed
+	}
+	if !IsNil(o.StreamNote) {
+		toSerialize["stream_note"] = o.StreamNote
+	}
+	if !IsNil(o.Note) {
+		toSerialize["note"] = o.Note
+	}
+	if !IsNil(o.RadioUrl) {
+		toSerialize["radio_url"] = o.RadioUrl
+	}
+	if !IsNil(o.Platforms) {
+		toSerialize["platforms"] = o.Platforms
 	}
 	return toSerialize, nil
-}
-
-func (o *BroadcastChannel) UnmarshalJSON(data []byte) (err error) {
-	// This validates that all required properties are included in the JSON object
-	// by unmarshalling the object into a generic map with string keys and checking
-	// that every required field exists as a key in the generic map.
-	requiredProperties := []string{
-		"name",
-	}
-
-	allProperties := make(map[string]interface{})
-
-	err = json.Unmarshal(data, &allProperties)
-
-	if err != nil {
-		return err
-	}
-
-	for _, requiredProperty := range requiredProperties {
-		if _, exists := allProperties[requiredProperty]; !exists {
-			return fmt.Errorf("no value given for required property %v", requiredProperty)
-		}
-	}
-
-	varBroadcastChannel := _BroadcastChannel{}
-
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varBroadcastChannel)
-
-	if err != nil {
-		return err
-	}
-
-	*o = BroadcastChannel(varBroadcastChannel)
-
-	return err
 }
 
 type NullableBroadcastChannel struct {

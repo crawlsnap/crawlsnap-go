@@ -78,18 +78,30 @@ func (m *mockHandler) handle(r *http.Request) (*http.Response, error) {
 			return ok(`{"hash_id":"h","search_type":"domain","subdomains":[{"subdomain":"a.example.com"}],"cursor":"c1","count":2}`), nil
 		}
 		return ok(`{"hash_id":"h","search_type":"domain","subdomains":[{"subdomain":"b.example.com"}],"cursor":"","count":2}`), nil
-	case "/v1/sport-snap/channels/bein-connect-turkey":
-		return ok(`{"slug":"bein-connect-turkey","name":"beIN CONNECT Turkey","country":"Turkey","broadcast_rights":[{"competition":"England - Premier League","year_start":2024,"year_end":2027}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
-	case "/v1/sport-snap/channels/bein-connect-turkey/schedule":
-		return ok(`{"slug":"bein-connect-turkey","name":"beIN CONNECT Turkey","entries":[{"date":"2026-07-06","kickoff_utc":"2026-07-06T19:00:00Z","match_id":5542814,"match_title":"Brazil vs Norway","competition":"Friendly","is_placeholder":false,"kickoff_local":"10:00pm","kickoff_raw":"10:00pm"}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
-	case "/v1/sport-snap/matches/5542814":
-		return ok(`{"id":5542814,"status":"finished","is_placeholder":false,"competition":{"name":"Friendly"},"home_team":{"name":"Brazil"},"away_team":{"name":"Norway"},"score":{"home":2,"away":1},"events":[],"stats":[],"broadcasts":[{"country":"Turkey","country_slug":"turkey","channels":[{"name":"beIN CONNECT Turkey","slug":"bein-connect-turkey"}]}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
-	case "/v1/sport-snap/matches/404":
+	case "/v1/sport-snap/livescores":
+		return ok(`{"sport":"soccer","updated":"1234","matches":[{"id":"5542814","game":"Brazil vs Norway","result":"2 - 1","status":"FT"}]}`), nil
+	case "/v1/sport-snap/matches":
+		return ok(`{"competitions":[{"competition":"Friendly","fixtures":[{"fixture_id":"5542814","team1_name":"Brazil","team2_name":"Norway"}]}]}`), nil
+	case "/v1/sport-snap/match/5542814":
+		return ok(`{"competition":{"competition":"Friendly","slug":"friendly"},"fixture":{"fixture_id":"5542814","game":"Brazil vs Norway","status":"FT","result":"2 - 1"}}`), nil
+	case "/v1/sport-snap/match/404":
 		return errResp(404, "Unknown match id"), nil
-	case "/v1/sport-snap/countries/turkey/channels":
-		return ok(`{"country":"Turkey","country_slug":"turkey","channels":[{"name":"beIN CONNECT Turkey","slug":"bein-connect-turkey","last_seen":"2026-07-05T10:00:00Z"}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
-	case "/v1/sport-snap/schedules/2026-07-05":
-		return ok(`{"date":"2026-07-05","competitions":[{"competition":"Friendly","matches":[{"id":5542814,"title":"Brazil vs Norway","status":"scheduled","is_placeholder":false,"kickoff_utc":"2026-07-06T19:00:00Z","channels":[{"name":"beIN CONNECT Turkey","slug":"bein-connect-turkey"}]}]}],"updated_at":"2026-07-05T10:00:00Z"}`), nil
+	case "/v1/sport-snap/competitions":
+		return ok(`{"competitions":{"comp_popular":[{"competition_id":"1","name":"Premier League","slug":"premier-league","country":"England"}]}}`), nil
+	case "/v1/sport-snap/competitions/england/premier-league":
+		return ok(`{"competition":{"competition_id":"1","competition":"Premier League","slug":"premier-league","country":"England"},"fixtures":[{"fixture_id":"77","team1_name":"Arsenal","team2_name":"Chelsea"}]}`), nil
+	case "/v1/sport-snap/countries/brazil":
+		return ok(`{"team":{"title":"Brazil","slug":"brazil","country":"Brazil","nat_team":"1"}}`), nil
+	case "/v1/sport-snap/channels":
+		return ok(`{"channels":[{"channel_id":"9","name":"beIN CONNECT Turkey","slug":"bein-connect-turkey","country":"Turkey"}]}`), nil
+	case "/v1/sport-snap/channels/bein-connect-turkey/info":
+		return ok(`{"channel":{"channel_id":"9","slug":"bein-connect-turkey","name":"beIN CONNECT Turkey","platform":"streaming"},"tv_rights":[{"channel_id":"9","name":"beIN Sports"}]}`), nil
+	case "/v1/sport-snap/news":
+		return ok(`{"articles":[{"article_id":"321","title":"Transfer news","slug":"transfer-news"}]}`), nil
+	case "/v1/sport-snap/search/all":
+		return ok(`{"results":[{"type":"team","url":"/teams/spain/barcelona/","title":"Barcelona"}]}`), nil
+	case "/v1/sport-snap/player/messi/123":
+		return ok(`{"profile":{"id":"123","slug":"messi","name":"Lionel Messi","position":"Forward"}}`), nil
 	}
 	return jsonResp(500, `{"data":null,"is_success":false,"message":"unexpected","response_code":500}`, nil), nil
 }

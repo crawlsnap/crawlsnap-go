@@ -25,32 +25,14 @@ npx -y @openapitools/openapi-generator-cli@latest generate \
   >/dev/null
 
 # 3. Replace the typed payload models in place; leave the facade untouched.
+# Copy every generated payload model, then drop the envelope/response wrappers
+# (BaseResponse, ErrorResponse and each product's *Response type) — those are
+# handled by the hand-written facade, which unwraps the envelope itself and
+# exposes only the typed `data` payloads.
 rm -f "$REPO_ROOT"/models/*.go
-cp "$TMP"/model_ioc_*_scan_data.go "$REPO_ROOT/models/"
-cp "$TMP"/model_pulse_*_scan_data.go "$REPO_ROOT/models/"
-cp "$TMP"/model_subdo_snap_scan_data.go "$REPO_ROOT/models/"
-# SportSnap payload models + their nested sub-schemas.
-cp "$TMP"/model_channel_data.go "$REPO_ROOT/models/"
-cp "$TMP"/model_channel_schedule_data.go "$REPO_ROOT/models/"
-cp "$TMP"/model_channel_schedule_entry.go "$REPO_ROOT/models/"
-cp "$TMP"/model_match_data.go "$REPO_ROOT/models/"
-cp "$TMP"/model_match_event.go "$REPO_ROOT/models/"
-cp "$TMP"/model_match_stat.go "$REPO_ROOT/models/"
-cp "$TMP"/model_match_status.go "$REPO_ROOT/models/"
-cp "$TMP"/model_country_channels_data.go "$REPO_ROOT/models/"
-cp "$TMP"/model_country_channel.go "$REPO_ROOT/models/"
-cp "$TMP"/model_country_broadcast.go "$REPO_ROOT/models/"
-cp "$TMP"/model_daily_schedule_data.go "$REPO_ROOT/models/"
-cp "$TMP"/model_competition_schedule.go "$REPO_ROOT/models/"
-cp "$TMP"/model_competition_ref.go "$REPO_ROOT/models/"
-cp "$TMP"/model_scheduled_match.go "$REPO_ROOT/models/"
-cp "$TMP"/model_broadcast_channel.go "$REPO_ROOT/models/"
-cp "$TMP"/model_broadcast_right.go "$REPO_ROOT/models/"
-cp "$TMP"/model_team_ref.go "$REPO_ROOT/models/"
-cp "$TMP"/model_score.go "$REPO_ROOT/models/"
-cp "$TMP"/model_lineup.go "$REPO_ROOT/models/"
-cp "$TMP"/model_lineups.go "$REPO_ROOT/models/"
+cp "$TMP"/model_*.go "$REPO_ROOT/models/"
 cp "$TMP"/utils.go "$REPO_ROOT/models/"
+rm -f "$REPO_ROOT"/models/model_*_response.go
 rm -rf "$TMP"
 
 # 4. Tidy + format.

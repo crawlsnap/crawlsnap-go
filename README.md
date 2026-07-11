@@ -65,17 +65,31 @@ otherwise — you never inspect the response envelope yourself.
 | `client.PulseSnap.URL / Hash / IP / Domain(ctx, q)` | threat-intelligence pulse enrichment |
 | `client.SubdoSnap.Scan(ctx, q)` | one page of subdomains |
 | `client.SubdoSnap.ScanIter(ctx, q)` | every subdomain across all pages |
-| `client.SportSnap.Channel(ctx, slug)` | TV channel metadata + broadcast rights |
-| `client.SportSnap.ChannelSchedule(ctx, slug)` | channel broadcast schedule |
-| `client.SportSnap.Match(ctx, id)` | match details, per-country coverage, result data |
-| `client.SportSnap.CountryChannels(ctx, country)` | TV channels known for a country |
-| `client.SportSnap.DailySchedule(ctx, "2026-07-05")` | daily schedule grouped by competition |
-| `client.SportSnap.DailyScheduleTime(ctx, t)` | same, from a `time.Time` |
+| `client.SportSnap.Livescores(ctx)` | live-score board with in-match events |
+| `client.SportSnap.Matches(ctx, isoCode)` | fixtures grouped by competition |
+| `client.SportSnap.MatchesExtended(ctx, isoCode, ts)` | extended fixtures + translations |
+| `client.SportSnap.Match(ctx, id)` | full match view (lineups, events, stats, broadcasts) |
+| `client.SportSnap.MatchStats / MatchCommentaries / MatchChannels(ctx, id, …)` | match view variants |
+| `client.SportSnap.Competitions(ctx, isoCode)` | competition catalog |
+| `client.SportSnap.Competition(ctx, country, slug)` | competition detail (fixtures, tables, scorers) |
+| `client.SportSnap.CompetitionTables / TvRights / Twitter(ctx, country, slug)` | standings, TV rights, social |
+| `client.SportSnap.PopularTeams / AllTeams(ctx)` | popular teams, national-team catalog |
+| `client.SportSnap.NationalTeam(ctx, slug)` / `ClubTeam(ctx, country, team)` | team detail |
+| `client.SportSnap.AllChannels / Channels(ctx, isoCode)` | TV channel directories |
+| `client.SportSnap.ChannelInfo / ChannelRepeats(ctx, slug, isoCode)` | channel metadata + schedule |
+| `client.SportSnap.News(ctx, start, isoCode)` | news feed |
+| `client.SportSnap.NewsByTag(ctx, tag, start)` / `NewsArticle(ctx, id)` | tagged news, single article |
+| `client.SportSnap.CompetitionNews / NationalTeamNews / ClubTeamNews(ctx, …, start)` | entity news |
+| `client.SportSnap.SearchAll / SearchTeams / SearchCompetitions / SearchMatches / SearchPlayers(ctx, q)` | full-text search |
+| `client.SportSnap.PopularSearches(ctx)` | popular searches |
+| `client.SportSnap.Player(ctx, slug, id)` | player profile + per-season stats |
 
-`SportSnap` covers live football (soccer) TV listings. `Match` status is
-`scheduled`, `live`, or `finished` and discriminates how much of the payload
-is populated (score, events, statistics, lineups). Match ids and channel
-slugs are discovered via `DailySchedule` and `ChannelSchedule` entries.
+`SportSnap` covers football (soccer) data: live scores, fixtures, match detail,
+competitions, teams, TV channels, news, search, and player profiles. `iso_code`
+is a two-letter region code that resolves region-specific broadcast channels —
+pass `""` for the server default. Path segments (competition `country`/`slug`,
+team `country`/`team`, player `slug`/`id`) and match ids come from the `url` and
+`fixture_id` fields in list, search, and detail payloads.
 
 ## Errors
 
